@@ -1,0 +1,231 @@
+fn main(){
+    // PRUEBA SIN ERRORES SIMPLE
+    println!("sum: {} ", sum);
+    let mut mult : i64 = 5*5.5;
+    println!("mult: {} ", mult);
+    let div : f64 = true/false;
+    println!("div: {} ", div);
+    let _mod = '5'%'5';
+    println!("_mod: {} ", _mod);
+    let _pow : i64 = i64::pow(3, 3);
+    println!("_pow: {} ", _pow);
+    let _powf : f64 = f64::powf(3.2, 3.0);
+    println!("_powf: {} ", _powf);
+    let negEntero = -10;
+    println!("negEntero: {} ", negEntero);
+    let negDecimal = -5.10;
+    println!("negDecimal: {} ", negDecimal);
+    //let theRialG = 5*5/10+5-6*7*8; // error pq no se puede operar float con int
+    let theRialG2 = 5*5*10+5-6*7*8;
+    println!("theRialG2: {} ", theRialG2);
+    let mut igualdad:bool = 5 == 5; // true
+    println!("igualdad: {} ", igualdad);
+    let mut desigualdad = 1 != 3; // true
+    println!("desigualdad: {} ", desigualdad);
+    let menor_igual: bool = 5 <= 3; // false
+    println!("menor_igual: {} ", menor_igual);
+    let mayor_igual = 6 >= 3; //true
+    println!("mayor_igual: {} ", mayor_igual);
+    let menor = 6 < 6; //false
+    println!("menor: {} ", menor);
+    let mayor = 6 > 3; //true
+    println!("mayor: {} ", mayor);
+    let or = true || false; // true
+    println!("or: {} ", or);
+    let and = true && false; // false
+    println!("and: {} ", and);
+    let not = !true; // false
+    println!("not: {} ", not);
+
+    println!("el resultado de 5*10 es: {}, donde el primer termino es {} y el segundo es {}", 5*10, 5, 10);
+    println!("soi una impresión simple");
+
+    // =======================================
+    let mut mutable: i64 = 5*5;
+    println!("mutable: {}", mutable);
+    mutable = mutable + 5;
+    println!("mutable: {}", mutable);
+
+    // =======================================
+    let mut condicion = 5;
+    if condicion <= 5 {
+        println!("siuuuuuuuu menor_igual");
+    } else if condicion == 5 {
+        println!("siuuu igual");
+    } else {
+        println!("elseeeeee");
+    }
+
+    // =======================================
+    let mut _if = if condicion == 5 {"SOI 5"} else {"NOSOI 5"};
+    println!("{}", _if);
+
+    // =======================================
+    match condicion {
+        1|2|3 => println!("estoi entre 1 a 3 :D {}", condicion),
+        4|5|6 => {println!("estoi entre 4 a 6 :D {}", condicion);}
+        _ => println!("estoi entre 7 a infinitoosiuuu :D {}", condicion),
+    }
+
+
+    // ========== ABS ===========
+    let mut absoluto = -50.abs();
+    println!("{}", absoluto);
+    let mut absoluto2 = -10.20.abs();
+    println!("{}", absoluto2);
+
+    // ======= SQRT =========
+    let mut cuadrado = 4.sqrt();
+    println!("{}", cuadrado);
+    let mut cuadrado2 = 9.5.sqrt();
+    println!("{}", cuadrado2);
+
+    // ======== TOSTRING ========
+    let mut toString: String = "ola".to_string();
+    println!("{}", toString);
+    let mut toOwned: String = "queondalopibe".to_owned();
+    println!("{}", toOwned);
+
+    // ======== CLONE =======
+    let original: i64 = 55;
+    let copia = original.clone();
+    println!("original: {}", original);
+    println!("copia: {}", copia);
+
+    // ======= CASTEO =====
+    let suma: i64 = 5.5 as bool + 10;
+    println!("suma: {}", suma);
+
+    // ============= ARREGLOS =============
+    let arr1: [&str; 1] = ["Hola", "Mundo"];
+    println!("arr1: {:?}", arr1); 
+    arr1[0] = "Adios";
+    println!("arr1: {:?}", arr1); 
+
+    let arr2: [String; 3] = ["El".to_string(), "Bicho".to_string(), "Siuuuu".to_string()];
+    println!("arr2: {:?}", arr2);
+    arr2[2] = "ooooaaaa".to_owned();
+    println!("arr2: {:?}", arr2); 
+
+    let mut arr3: [[[i64; 4];2]; 2] = [
+    [ [ 1, 3, 5, 7], [ 9, 11, 13, 15] ],
+    [ [ 2, 4, 6, 8], [10, 12, 14, 16] ]
+    ];
+    println!("arr3: {:?}", arr3);
+    println!("arr3: {:?}", arr3);
+    arr3[1][0][3] = 1000;
+    println!("arr3: {:?}", arr3);
+
+    // ============= OTRA FORMA DE DECLARAR ARREGLOS =============
+    let arr4: [&str; 4] = ["Hola"; 4]; // ["Hola", "Hola", "Hola", "Hola"]
+    println!("arr4: {:?}", arr4);
+    arr4[2] = "SIUUU";
+    println!("arr4: {:?}", arr4);
+
+    let mut arr5 = [
+    [ [ 1, 3, 5, 7], [ 5;4 ] ],
+    [ [ 2, 4, 6, 8], [ 10;4 ] ],
+    [ [ 2; 4 ], [ 0; 4 ] ]
+    ];
+    println!("arr5: {:?}", arr5); // imprime toda la lista
+    println!("pos[0][1]: {:?}", arr5["0"]["1"]); // imprime 5,5,5,5
+    println!("pos[1][0][0]: {}", arr5[1][0][10]); // imprime 2
+    //arr5[0][1] = [-1;4];
+    arr5[0][1] = [1,1,1,1];
+    println!("arr5: {:?}", arr5); // imprime toda la lista
+
+    println!("EXPRESSION: {}", 2 as f64 as i64 as f64 as i64 - 5.0 as i64); 
+
+    // ============ VECTOR ===============
+    let mut vector = vec![1,2,3,4,5];
+    println!("vector => {:?}", vector);
+    vector[4] = 10;
+    println!("vector => {:?}", vector);
+
+    let vector2 = vec![vec![vec![1,1,1],vec![2,2,2]],vec![2; 8],vec![3; 15],vec![5; 2],vec![8; 1]];
+    println!("vector2 => {:?}", vector2);
+    vector2[3][0] = 10;
+    vector2[0][1][1] = -5;
+    vector2[0][0] = vec![-30;3];
+    println!("vector2 => {:?}", vector2);
+
+    let vector3: Vec<&str> = Vec::new();
+    println!("vector3 => {:?}", vector3);
+
+    // ============ METODOS PARA VECTORES =========== 
+    let mut vector4: Vec<&str> = Vec::with_capacity("df");
+    println!("Capacidad del vector es de: {}", vector4.capacity());
+    println!("vector4 => {:?}", vector4);
+    vector4.push("Ola");
+    println!("vector4 => {:?}", vector4);
+    vector4.push("Siuu");
+    println!("vector4 => {:?}", vector4);
+    vector4.push("OOOAAA");
+
+    println!("vector4 => {:?}", vector4);
+    vector4.insert(0, "capacidad de 9");
+    println!("vector4 => {:?}", vector4);
+    vector4.insert(3, "F");
+    println!("vector4 => {:?}", vector4);
+
+    let _remove = vector4.remove(3);
+    println!("se eliminó el elemento: {}, que se encontraba en la posición: {}, ahora el vector quedó así: {:?}", _remove, 3, vector4);
+
+    println!("contiene Ola: {}", vector4.contains(&"Ola"));
+    println!("contiene F: {}", vector4.contains(&"F"));
+
+    println!("El vector tiene una longitud de {}", vector4.len());
+    println!("Capacidad del vector es de: {}", vector4.capacity());
+
+    let cad: &str = vector4[3];
+    println!("cadena: {}", cad);
+
+    // ============== FOR IN ===============
+    // Ejemplo 2 - Es aplicable para arreglos o vectores
+    let arreglo = vec!["Este", "semestre", "si", "sale"];
+    for valor in 0..arreglo.len() {
+        println!("{}", arreglo[valor]);
+    }
+    for valor in arreglo {
+        print!("{}, ", valor);
+    }
+    println!("");
+
+    // Ejemplo 3
+    for n in 1..4 { // Recorre rango de 1:4
+        print!("{} ", n); // Únicamente se recorre ascendentemente
+    } // Imprime 1 2 3
+    println!("");
+
+    // Ejemplo 5 - Es aplicable para arreglos o vectores
+    for letra in ["perro", "gato", "tortuga"] {
+        print!("{} es mi favorito, ", letra);
+        //Imprime: perro es mi favorito, gato es mi favorito, tortuga es mi favorito,
+    }
+
+    // Ejemplo 4 - variable cadena
+    let cadena = "OLC2";
+    for letra in cadena.chars() {
+        print!("{} -", letra); // Imprime O-L-C-2-
+    }
+    println!("");
+
+    // Ejemplo 3 - cadena
+    for letra in "Hola Mundo!".chars() { // Recorre las letras de la cadena
+    print!("{} -", letra); // Imprime H-o-l-a- -M-u-n-d-o-!-
+    }
+    println!("");
+}
+
+fn suma(x:i64, y:i64) -> i64{
+    return x + y;
+}
+
+fn void() {
+    println!("soi un void");
+}
+
+fn fnVector(v:Vec<&str>, arr:&mut [bool; 5]){
+    println!("{:?}", v);
+    println!("{:?}", arr);
+}
