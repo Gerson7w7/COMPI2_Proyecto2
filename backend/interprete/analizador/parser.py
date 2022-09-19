@@ -258,9 +258,20 @@ def p_type(p):
     """
     # POSIBLE EFE POR EL IDENTIFICADOR
     if (len(p) == 2):
-        p[0] = p[1];
+        if(p[1] == 'i64' or p[1] == 'usize'):
+            p[0] = TipoDato.INT64;
+        elif(p[1] == 'f64'):
+            p[0] = TipoDato.FLOAT64;
+        elif(p[1] == 'bool'):
+            p[0] = TipoDato.BOOLEAN;
+        elif(p[1] == 'char'):
+            p[0] = TipoDato.CHAR;
+        elif(p[1] == 'String'):
+            p[0] = TipoDato.STRING;
+        else:
+            p[0] = p[1];
     elif (len(p) == 3):
-        p[0] = p[2];
+        p[0] = TipoDato.STR;
 
 def p_type_arreglo(p):
     """

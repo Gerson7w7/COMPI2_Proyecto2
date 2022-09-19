@@ -14,6 +14,7 @@ class Bloque(Instruccion):
         newScope = Scope(scope, ambito);
         for instruccion in self.instrucciones:
             try:
+                instruccion.generador = self.generador;
                 val = instruccion.ejecutar(console, newScope);
                 if (val != None):
                     if (ambito == 'Main'):

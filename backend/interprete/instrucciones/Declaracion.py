@@ -1,3 +1,4 @@
+from ..expresiones.Expresion import Expresion
 from ..extra.Simbolo import Simbolo
 from ..extra.Tipos import TipoDato
 from .Instruccion import Instruccion
@@ -7,7 +8,7 @@ from ..extra.Retorno import RetornoExpresion
 from datetime import datetime
 
 class Declaracion(Instruccion):
-    def __init__(self, mut:bool, id: str, tipo: str, valor, linea: int, columna: int):
+    def __init__(self, mut:bool, id: str, tipo: TipoDato, valor: Expresion, linea: int, columna: int):
         super().__init__(linea, columna)
         self.mut = mut; 
         self.id = id;
@@ -15,42 +16,35 @@ class Declaracion(Instruccion):
         self.valor = valor;
 
     def ejecutar(self, console: Console, scope: Scope):
-        # analizando el tipo de dato
-        _tipo: TipoDato = None;
-        if (self.tipo != None):
-            if (self.tipo == 'i64' or self.tipo == 'usize'):
-                _tipo = TipoDato.INT64
-            elif (self.tipo == 'f64'):
-                _tipo = TipoDato.FLOAT64
-            elif (self.tipo == 'bool'):
-                _tipo = TipoDato.BOOLEAN
-            elif (self.tipo == 'char'):
-                _tipo = TipoDato.CHAR
-            elif (self.tipo == 'String'):
-                _tipo = TipoDato.STRING
-            elif (self.tipo == 'str'):
-                _tipo = TipoDato.STR
-            else: 
-                _tipo = self.tipo;
-
-        # expresiones ya ejecutadas
-        if (isinstance(self.valor, RetornoExpresion) or isinstance(self.valor, Simbolo)):
-            val = self.valor;
-        # variables inicializadas
-        elif (self.valor != None):
-            # obteniendo el valor de la expresion
-            val = self.valor.ejecutar(console, scope);
-        # variables no inicializadas
-        else:
-            val = self.valorDefault(_tipo);
-
-        _tipo = val.tipo if (_tipo == None) else _tipo;
+        self.valor.generador = self.generador;
+        val:RetornoExpresion = self.valor.ejecutar(console, scope);
         # asegurandonos de que sea el mismo tipo de dato para crear la variable
-        if (val.tipo != _tipo):
+        if (self.tipo != None and val.tipo != self.tipo):
             # error, diferentes tipos de datos
-            _error = _Error(f'Tipos incompatibles. Se esperaba un tipo de dato {_tipo.name} y se encontró {val.tipo}', scope.ambito, self.linea, self.columna, datetime.now());
-            raise Exception(_error);  
-        scope.crearVariable(self.id, val.valor, 'Variable', val.tipo, self.mut, None, None, None, self.linea, self.columna, console);
+            _error = _Error(f'Tipos incompatibles. Se esperaba un tipo de dato {self.tipo.name} y se encontró {val.tipo}', scope.ambito, self.linea, self.columna, datetime.now());
+            raise Exception(_error); 
+        posicion:int = scope.crearVariable(self.id, 'Variable', val.tipo, self.mut, None, self.linea, self.columna, console); 
+        if (val.tipo == TipoDato.BOOLEAN):
+            '''
+            val.EV:
+                STACK[pos] = 1;
+                goto Salida;
+            val.EF:
+                STACK[pos] = 0;
+            Lsalida:
+            '''
+            lSalida = self.generador.newEtq();
+            self.generador.addEtq(val.trueEtq);
+            self.generador.setStack(posicion, val.valor);
+            self.generador.addGoto(lSalida);
+            self.generador.addEtq(val.trueEtq);
+            self.generador.setStack(posicion, val.valor);
+            self.generador.addEtq(lSalida);
+        else:
+            '''
+            STACK[pos] = val.valor
+            '''
+            self.generador.setStack(posicion, val.valor);
     
     def valorDefault(_tipo:TipoDato):
         if (_tipo == TipoDato.INT64):

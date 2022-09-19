@@ -11,6 +11,11 @@ class Dimension:
         self.dimensiones = dimensiones;
         self.esVector = esVector;
 
+class AtributosArreglo:
+    def __init__(self, esVector:bool, with_capacity:int) -> None:
+        self.esVector = esVector;
+        self.with_capacity = with_capacity;
+
 class WithCapacity:
     def __init__(self, esVector:bool, capacidad:int):
         self.esVector = esVector;

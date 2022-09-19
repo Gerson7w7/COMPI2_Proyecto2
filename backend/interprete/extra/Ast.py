@@ -1,9 +1,11 @@
+from ..instrucciones.Instruccion import Instruccion
 from .Console import Console
 from .Scope import Scope
 
 # clase con la que se formará el ast final
 class Ast:
     def __init__(self, instrucciones):
+        self.generador = None;
         self.instrucciones: list = instrucciones;
 
     def ejecutar(self, console: Console, scope: Scope):
@@ -15,6 +17,7 @@ class Ast:
                 console.append(f'ERROR: {e.args[0].descripcion}. En la línea {e.args[0].linea}, columna {e.args[0].columna}\n');
                 # agregamos a lista de errores
                 console.error(e.args[0]);
-        funMain = scope.getFuncion('main', 0, 0);
+        funMain:Instruccion = scope.getFuncion('main', 0, 0);
         # si es el main se ejecuta de una vez
+        funMain.bloque.generador = self.generador;
         funMain.bloque.ejecutar(console, scope, 'Main');

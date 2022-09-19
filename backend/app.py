@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
+from interprete.extra.Generador import Generador
 from interprete.extra.Console import Console
 from interprete.extra.Scope import Scope
 from interprete.extra.Ast import Ast
@@ -23,13 +24,14 @@ def grammar():
         try:
             ast: Ast = parser.parse(data['data']);
             scope: Scope = Scope(None, 'Global');
-            # limpiamos la consola de salida
+            generador: Generador = Generador();
+            ast.generador = generador;
             ast.ejecutar(console, scope);
         except Exception as e:
             console.append(e.args[0]);
-        print("soi console: " + console.output);
+        print("soi console: " + generador.getCodigo);
         return {
-            'salida': console.output
+            'salida': generador.getCodigo
         }
 
 @app.route('/errores', methods=['GET'])

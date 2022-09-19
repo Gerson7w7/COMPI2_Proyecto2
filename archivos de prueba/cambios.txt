@@ -1,0 +1,2 @@
+Literal: listo
+Declaración: listo

@@ -1,5 +1,6 @@
 # clase para manejar los entornos, ambitos, env o scopes
-from ..extra.TablaSimbolo import TablaSimbolo
+from ..instrucciones.Arreglo import AtributosArreglo
+from .TablaSimbolo import TablaSimbolo
 from .Tipos import TipoDato 
 from .Simbolo import Simbolo
 from .Console import _Error, Console
@@ -12,9 +13,12 @@ class Scope:
         self.variables = {};
         self.funciones = {};
         self.structs = {};
+        self.size:int = 0;
+        # pasamos donde empieza el nuevo ambito
+        if(self.padre != None): self.size = self.padre.size;
     
     # función para crear una variable
-    def crearVariable(self, id: str, valor, tipoSimbolo:str, tipoDato: TipoDato, mut:bool, esVector:bool, with_capacity:int, referencia, linea: int, columna: int, console:Console):
+    def crearVariable(self, id: str, tipoSimbolo:str, tipoDato: TipoDato, mut:bool, atrArr:AtributosArreglo, linea: int, columna: int, console:Console) -> int:
         scope: Scope = self;
         ambito:str = scope.ambito;
         while(scope != None):
@@ -25,10 +29,12 @@ class Scope:
                 raise Exception(_error);
             scope = scope.padre;
         # procedemos a crear la variable
-        self.variables[id] = Simbolo(valor, id, tipoDato, mut, esVector, with_capacity, referencia);
-        # lo guardamos en la tabla de simbolos
+        posicion:int = self.size;
+        self.variables[id] = Simbolo(id, tipoDato, mut, atrArr, posicion);
+        # lo guardamos en la tabla de simbolos para nuestro reporte de símbolos
         _tipoDato = str(tipoDato.name) if (isinstance(tipoDato, TipoDato)) else tipoDato;
         console.appendSimbolo(TablaSimbolo(id, tipoSimbolo, _tipoDato, ambito, linea, columna));
+        return posicion;
 
     # función para obtener el valor de una variable
     def getValor(self, id:str, linea:int, columna:int):
