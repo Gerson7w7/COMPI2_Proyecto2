@@ -1,10 +1,10 @@
 # clase para poder accesar a las variables
+from ..extra.Retorno import RetornoExpresion
 from ..extra.Tipos import TipoDato
 from ..extra.Simbolo import Simbolo
 from .Expresion import Expresion
 from ..extra.Console import Console, _Error
 from ..extra.Scope import Scope
-from ..extra.Retorno import RetornoExpresion
 from datetime import datetime
 
 class Acceso(Expresion):
@@ -15,11 +15,25 @@ class Acceso(Expresion):
     def ejecutar(self, console: Console, scope: Scope):
         # buscamos y obtenemos el valor
         valor = scope.getValor(self.id, self.linea, self.columna);
-        if (valor != None):
-            return valor;
-        # error, no se encontró la variable
-        _error = _Error(f'No se pudo encontrar la variable {str(self.id)}', scope.ambito, self.linea, self.columna, datetime.now());
-        raise Exception(_error);
+        newTemp = self.generador.newTemp();
+        self.generador.getStack(newTemp, valor.posicion);
+        if(valor.tipo == TipoDato.BOOLEAN):
+            '''
+            if(tn == 1) goto self.EV
+            goto self.EF
+            '''
+            val:RetornoExpresion = RetornoExpresion(newTemp, valor.tipo, False);
+            if(self.trueEtq == ''):
+                self.trueEtq = self.generador.newEtq();
+            if(self.falseEtq == ''):
+                self.falseEtq = self.generador.newEtq();
+            self.generador.addIf(newTemp, '1', '==', self.trueEtq);
+            self.generador.addGoto(self.falseEtq);
+            val.trueEtq = self.trueEtq;
+            val.falseEtq = self.falseEtq;
+            return val;
+        else:
+            return RetornoExpresion(newTemp, valor.tipo, True);
 
 class AccesoArreglo(Expresion):
     def __init__(self, id:str, indices:list, linea:int, columna:int):

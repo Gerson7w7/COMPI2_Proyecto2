@@ -22,6 +22,6 @@ class Bloque(Instruccion):
                         raise Exception(_error);
                     return val;
             except Exception as e:
-                console.append(f'ERROR: {e.args[0].descripcion}. En la línea {e.args[0].linea}, columna {e.args[0].columna}\n');
+                self.generador.errorSem(f'ERROR: {e.args[0].descripcion}. En la línea {e.args[0].linea}, columna {e.args[0].columna}\n');
                 # agregamos a lista de errores
                 console.error(e.args[0]);

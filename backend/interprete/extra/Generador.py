@@ -18,8 +18,8 @@ class Generador:
         codigo += '#include <math.h>\n';
         codigo += 'double HEAP[10000];\n';
         codigo += 'double STACK[10000];\n';
-        codigo += 'double SP;\n';
-        codigo += 'double HP;\n';
+        codigo += 'double SP = 0;\n';
+        codigo += 'double HP = 0;\n';
         # cuerpo del código en C
         if(0 < len(self.temporales)):
             codigo += f'double {self.getTemporales()};\n\n';
@@ -97,3 +97,7 @@ class Generador:
     # añade salto de línea
     def newLine(self) -> None:
         self.codigo.append('printf("%c",10)');
+
+    # añade un error semántico
+    def errorSem(self, mensaje:str) -> None:
+        self.codigo.append(mensaje);

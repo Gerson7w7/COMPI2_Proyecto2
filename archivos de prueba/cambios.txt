@@ -1,2 +1,6 @@
 Literal: listo
 Declaración: listo
+Asignación: listo
+Acceso: listo
+AccesoArreglo: ::::PENDIENTE::::
+AccesoStruct: ::::PENDIENTE::::

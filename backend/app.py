@@ -21,17 +21,17 @@ def grammar():
         data = request.json
         print(data['data']);
         console.output = ""; console.errores = []; console.simbolos = [];
+        generador: Generador = Generador();
         try:
             ast: Ast = parser.parse(data['data']);
             scope: Scope = Scope(None, 'Global');
-            generador: Generador = Generador();
             ast.generador = generador;
             ast.ejecutar(console, scope);
         except Exception as e:
-            console.append(e.args[0]);
-        print("soi console: " + generador.getCodigo);
+            generador.errorSem(e.args[0]);
+        print("soi console: " + generador.getCodigo());
         return {
-            'salida': generador.getCodigo
+            'salida': generador.getCodigo()
         }
 
 @app.route('/errores', methods=['GET'])

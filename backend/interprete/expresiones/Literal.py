@@ -38,14 +38,12 @@ class Literal(Expresion):
             goto exp.EF; 
             '''
             # creamos la etiqueta para true o false
-            etq = self.generador.newEtq();
-            if(self.valor == 'true'):
-                retorno = RetornoExpresion('1', TipoDato.BOOLEAN, False);
-                retorno.trueEtq = etq;
+            retorno = RetornoExpresion('1', TipoDato.BOOLEAN, False);
+            retorno.trueEtq = self.generador.newEtq();
+            retorno.falseEtq = self.generador.newEtq();
+            if(self.valor == True):
                 self.generador.addGoto(retorno.trueEtq);
                 return retorno;
-            retorno = RetornoExpresion('0', TipoDato.BOOLEAN, False);
-            retorno.falseEtq = etq;
             self.generador.addGoto(retorno.falseEtq);
             return retorno;
         else:

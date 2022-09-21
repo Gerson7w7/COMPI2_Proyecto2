@@ -1,5 +1,4 @@
 from ..expresiones.Expresion import Expresion
-from ..extra.Simbolo import Simbolo
 from ..extra.Tipos import TipoDato
 from .Instruccion import Instruccion
 from ..extra.Console import Console, _Error
@@ -35,10 +34,10 @@ class Declaracion(Instruccion):
             '''
             lSalida = self.generador.newEtq();
             self.generador.addEtq(val.trueEtq);
-            self.generador.setStack(posicion, val.valor);
+            self.generador.setStack(posicion, '1');
             self.generador.addGoto(lSalida);
-            self.generador.addEtq(val.trueEtq);
-            self.generador.setStack(posicion, val.valor);
+            self.generador.addEtq(val.falseEtq);
+            self.generador.setStack(posicion, '0');
             self.generador.addEtq(lSalida);
         else:
             '''
@@ -61,14 +60,33 @@ class Declaracion(Instruccion):
             return RetornoExpresion('', TipoDato.STR, None);
 
 class Asignacion(Instruccion):
-    def __init__(self, id:str, expresion, linea: int, columna: int):
+    def __init__(self, id:str, expresion:Expresion, linea: int, columna: int):
         super().__init__(linea, columna)
         self.id = id;
         self.expresion = expresion;
 
     def ejecutar(self, console: Console, scope: Scope):
-        if (isinstance(self.expresion, RetornoExpresion) or isinstance(self.expresion, Simbolo)):
-            val = self.expresion;
+        self.expresion.generador = self.generador;
+        val:RetornoExpresion = self.expresion.ejecutar(console, scope);
+        posicion:int = scope.setValor(self.id, val, self.linea, self.columna);
+        if (val.tipo == TipoDato.BOOLEAN):
+            '''
+            val.EV:
+                STACK[pos] = 1;
+                goto Salida;
+            val.EF:
+                STACK[pos] = 0;
+            Lsalida:
+            '''
+            lSalida = self.generador.newEtq();
+            self.generador.addEtq(val.trueEtq);
+            self.generador.setStack(posicion, '1');
+            self.generador.addGoto(lSalida);
+            self.generador.addEtq(val.falseEtq);
+            self.generador.setStack(posicion, '0');
+            self.generador.addEtq(lSalida);
         else:
-            val = self.expresion.ejecutar(console, scope);
-        scope.setValor(self.id, val, self.linea, self.columna);
+            '''
+            STACK[pos] = val.valor
+            '''
+            self.generador.setStack(posicion, val.valor);

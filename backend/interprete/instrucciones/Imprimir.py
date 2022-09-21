@@ -10,7 +10,6 @@ class Imprimir(Instruccion):
         self.expresiones = expresiones;
 
     def ejecutar(self, console: Console, scope: Scope):
-        nuevaCadena:str = self.cadena;
         if (self.expresiones != None):
             for expresion in self.expresiones:
                 val = expresion.ejecutar(console, scope)

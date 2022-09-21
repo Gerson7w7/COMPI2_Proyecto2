@@ -1,8 +1,7 @@
 # clase para manejar los entornos, ambitos, env o scopes
-from ..instrucciones.Arreglo import AtributosArreglo
 from .TablaSimbolo import TablaSimbolo
 from .Tipos import TipoDato 
-from .Simbolo import Simbolo
+from .Simbolo import Simbolo, AtributosArreglo
 from .Console import _Error, Console
 from datetime import datetime
 
@@ -30,6 +29,7 @@ class Scope:
             scope = scope.padre;
         # procedemos a crear la variable
         posicion:int = self.size;
+        self.size += 1;
         self.variables[id] = Simbolo(id, tipoDato, mut, atrArr, posicion);
         # lo guardamos en la tabla de simbolos para nuestro reporte de símbolos
         _tipoDato = str(tipoDato.name) if (isinstance(tipoDato, TipoDato)) else tipoDato;
@@ -37,7 +37,7 @@ class Scope:
         return posicion;
 
     # función para obtener el valor de una variable
-    def getValor(self, id:str, linea:int, columna:int):
+    def getValor(self, id:str, linea:int, columna:int) -> Simbolo:
         scope: Scope = self;
         ambito:str = scope.ambito;
         while(scope != None):
@@ -55,7 +55,7 @@ class Scope:
             scope = scope.padre;
         return scope;
 
-    def setValor(self, id:str, valor, linea:int, columna:int):
+    def setValor(self, id:str, valor, linea:int, columna:int) -> int:
         scope: Scope = self;
         ambito:str = scope.ambito;
         while(scope != None):
@@ -63,11 +63,8 @@ class Scope:
                 val:Simbolo = scope.variables.get(id);
                 if (val.tipo == valor.tipo):
                     if (val.mut):
-                        scope.variables.update({id : Simbolo(valor.valor, id, valor.tipo, True, val.esVector, val.with_capacity, val.referencia)});
-                        # si se pasó por referencia cambiamos también la original
-                        if (val.referencia != None):
-                            ref = val.referencia;
-                            ref.scope.variables.update({ref.id : Simbolo(valor.valor, ref.id, valor.tipo, ref.val.mut, ref.val.esVector, ref.val.with_capacity, ref.val.referencia)});
+                        scope.variables.update({id : Simbolo(id, valor.tipo, True, val.atrArr, val.posicion)});
+                        return val.posicion;
                     else:
                         # error, variable no mutable
                         _error = _Error(f'La variable {id} no es mutable', ambito, linea, columna, datetime.now())
