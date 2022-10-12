@@ -1,6 +1,4 @@
-import copy
-
-from .Arreglo import Dimension
+from .DeclaracionArreglo import Dimension
 from ..extra.Tipos import TipoDato
 from ..extra.Simbolo import Simbolo
 from .Instruccion import Instruccion

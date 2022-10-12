@@ -5,6 +5,7 @@ from ..extra.Simbolo import Simbolo
 from .Expresion import Expresion
 from ..extra.Console import Console, _Error
 from ..extra.Scope import Scope
+from ..expresiones.Literal import Literal
 from datetime import datetime
 
 class Acceso(Expresion):
@@ -14,27 +15,21 @@ class Acceso(Expresion):
 
     def ejecutar(self, console: Console, scope: Scope):
         # buscamos y obtenemos el valor
-        valor = scope.getValor(self.id, self.linea, self.columna);
+        valor:RetornoExpresion = scope.getValor(self.id, self.linea, self.columna);
         newTemp = self.generador.newTemp();
+        self.generador.addComentario('ACCESO A VARIABLE');
         self.generador.getStack(newTemp, valor.posicion);
-        if(valor.tipo == TipoDato.BOOLEAN):
-            '''
-            if(tn == 1) goto self.EV
-            goto self.EF
-            '''
-            val:RetornoExpresion = RetornoExpresion(newTemp, valor.tipo, False);
-            if(self.trueEtq == ''):
-                self.trueEtq = self.generador.newEtq();
-            if(self.falseEtq == ''):
-                self.falseEtq = self.generador.newEtq();
-            self.generador.addIf(newTemp, '1', '==', self.trueEtq);
-            self.generador.addGoto(self.falseEtq);
-            val.trueEtq = self.trueEtq;
-            val.falseEtq = self.falseEtq;
-            return val;
-        else:
-            return RetornoExpresion(newTemp, valor.tipo, True);
-
+        retorno = RetornoExpresion(newTemp, valor.tipo, True);
+        if (valor.tipo == TipoDato.BOOLEAN):
+            retorno.trueEtq = self.generador.newEtq();
+            retorno.falseEtq = self.generador.newEtq();
+            self.generador.addIf(retorno.valor, '1', '==', retorno.trueEtq);
+            self.generador.addGoto(retorno.falseEtq);
+            return retorno;
+        if (valor.atrArr != None):
+            retorno.atrArr = valor.atrArr;
+        return retorno;
+        
 class AccesoArreglo(Expresion):
     def __init__(self, id:str, indices:list, linea:int, columna:int):
         super().__init__(linea, columna);

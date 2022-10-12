@@ -1,5 +1,6 @@
+from ..expresiones.Expresion import Expresion
 from ..extra.Simbolo import Simbolo
-from ..instrucciones.Arreglo import Arreglo
+from .DeclaracionArreglo import DeclaracionArreglo
 from ..extra.Tipos import TipoDato, TipoTransferencia
 from .Instruccion import Instruccion
 from ..extra.Console import Console, _Error
@@ -9,7 +10,7 @@ from ..expresiones.Literal import Literal
 from datetime import datetime
 
 class ForIn(Instruccion):
-    def __init__(self, id:str, iterable, bloque:Instruccion, linea: int, columna: int):
+    def __init__(self, id:str, iterable:Expresion, bloque:Instruccion, linea: int, columna: int):
         super().__init__(linea, columna);
         self.id = id;
         self.iterable = iterable;
@@ -53,7 +54,7 @@ class ForIn(Instruccion):
                             continue;
             # arreglo
             else:
-                arr = Arreglo(False, None, None, [], None, None, None, None);
+                arr = DeclaracionArreglo(False, None, None, [], None, None, None, None);
                 listaArr = arr.nuevaDimension(self.iterable, console, scope, None, None, -1);
                 # ejecutamos la declaración 
                 declaracion = Declaracion(True, self.id, arr.tipo, Literal(listaArr[0], arr.tipo, self.linea, self.columna), self.linea, self.columna);

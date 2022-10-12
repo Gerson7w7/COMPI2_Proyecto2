@@ -17,7 +17,7 @@ class Scope:
         if(self.padre != None): self.size = self.padre.size;
     
     # función para crear una variable
-    def crearVariable(self, id: str, tipoSimbolo:str, tipoDato: TipoDato, mut:bool, atrArr:AtributosArreglo, linea: int, columna: int, console:Console) -> int:
+    def crearVariable(self, valor:str, id: str, tipoSimbolo:str, tipoDato: TipoDato, mut:bool, atrArr:AtributosArreglo, linea: int, columna: int, console:Console) -> int:
         scope: Scope = self;
         ambito:str = scope.ambito;
         while(scope != None):
@@ -30,7 +30,7 @@ class Scope:
         # procedemos a crear la variable
         posicion:int = self.size;
         self.size += 1;
-        self.variables[id] = Simbolo(id, tipoDato, mut, atrArr, posicion);
+        self.variables[id] = Simbolo(valor, id, tipoDato, mut, atrArr, posicion);
         # lo guardamos en la tabla de simbolos para nuestro reporte de símbolos
         _tipoDato = str(tipoDato.name) if (isinstance(tipoDato, TipoDato)) else tipoDato;
         console.appendSimbolo(TablaSimbolo(id, tipoSimbolo, _tipoDato, ambito, linea, columna));
@@ -63,7 +63,7 @@ class Scope:
                 val:Simbolo = scope.variables.get(id);
                 if (val.tipo == valor.tipo):
                     if (val.mut):
-                        scope.variables.update({id : Simbolo(id, valor.tipo, True, val.atrArr, val.posicion)});
+                        scope.variables.update({id : Simbolo(valor.valor, id, valor.tipo, True, val.atrArr, val.posicion)});
                         return val.posicion;
                     else:
                         # error, variable no mutable

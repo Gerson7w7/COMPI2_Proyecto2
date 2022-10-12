@@ -3,15 +3,40 @@ from ..extra.Tipos import TipoTransferencia
 from ..extra.Scope import Scope
 from ..extra.Console import Console
 from ..extra.Retorno import RetornoExpresion
+from ..expresiones.Expresion import Expresion
+from ..extra.Console import _Error
+from datetime import datetime
 
 class Transferencia(Instruccion):
-    def __init__(self, retorno, tipo:TipoTransferencia, linea: int, columna: int):
+    def __init__(self, retorno:Expresion, tipo:TipoTransferencia, linea: int, columna: int):
         super().__init__(linea, columna)
         self.retorno = retorno;
         self.tipo = tipo;
 
     def ejecutar(self, console: Console, scope: Scope):
-        val = None if (self.retorno == None) else self.retorno.ejecutar(console, scope);
-        if (val == None):
-            return RetornoExpresion(None, None, self.tipo);
-        return RetornoExpresion(val.valor, val.tipo, self.tipo);
+        if (self.tipo == TipoTransferencia.BREAK):
+            '''
+            <código de retorno (si viniera)>
+            goto Lsalida;
+            '''
+            # retorno de la expresion
+            val:RetornoExpresion = None;
+            if (self.retorno != None):
+                self.retorno.generador = self.generador;
+                val = self.retorno.ejecutar(console, scope);
+                self.generador.addComentario('-1');
+            if (len(console.breaks) != 0):
+                self.generador.addGoto(console.breaks.pop());
+                if (val != None): return val;
+            else:
+                _error = _Error(f'No se esperaba la sentencia BREAK', scope.ambito, self.linea, self.columna, datetime.now());
+                raise Exception(_error);
+        elif (self.tipo == TipoTransferencia.CONTINUE):
+            '''
+            goto Linicio;
+            '''
+            if (len(console.continues) != 0):
+                self.generador.addGoto(console.continues.pop());
+            else:
+                _error = _Error(f'No se esperaba la sentencia CONTINUE', scope.ambito, self.linea, self.columna, datetime.now());
+                raise Exception(_error);

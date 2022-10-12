@@ -1,6 +1,35 @@
-Literal: listo
-Declaración: listo
-Asignación: listo
 Acceso: listo
 AccesoArreglo: ::::PENDIENTE::::
 AccesoStruct: ::::PENDIENTE::::
+Aritmetica: listo
+Casteo: listo
+Expresion: listo
+FuncionesNativias: 
+    ABS: listo
+    SQRT: listo
+    ToString: listo
+    Clone: listo
+    Chars: ::::PENDIENTE::::
+Literal: listo
+Logico: listo
+Relacional: listo
+Arreglo: ::::PENDIENTE::::
+Bloque: listo
+Declaración: listo
+Asignación: listo
+ForIn: ::::PENDIENTE::::
+Funcion: ::::PENDIENTE::::
+FuncionesVector: ::::PENDIENTE::::
+IfElse: listo
+Imprimir: listo
+Instruccion: listo
+LlamaFuncion: ::::PENDIENTE::::
+Loop: listo
+Match: listo
+Mod: ::::PENDIENTE::::
+Struct: ::::PENDIENTE::::
+Transferencia:
+    Break: listo
+    Continue: listo
+    Return: ::::PENDIENTE::::
+While: listo

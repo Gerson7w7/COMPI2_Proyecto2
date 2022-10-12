@@ -1,4 +1,5 @@
-from .Tipos import TipoDato, TipoTransferencia
+from ..extra.Simbolo import AtributosArreglo
+from .Tipos import TipoDato
 
 class RetornoExpresion:
     def __init__(self, valor, tipo: TipoDato, esTemp:bool):
@@ -7,3 +8,4 @@ class RetornoExpresion:
         self.esTemp = esTemp;
         self.trueEtq = '';
         self.falseEtq = '';
+        self.atrArr:AtributosArreglo = None;

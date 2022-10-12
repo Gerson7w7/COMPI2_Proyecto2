@@ -1,5 +1,5 @@
 from ..extra.Tipos import TipoDato
-from .Arreglo import Arreglo, Dimension
+from .DeclaracionArreglo import DeclaracionArreglo, Dimension
 from .Instruccion import Instruccion
 from ..extra.Scope import Scope
 from ..extra.Console import Console, _Error
@@ -20,7 +20,7 @@ class Funcion(Instruccion):
             scope.guardarFuncion(self.id, self, self.retorno_fn, self.linea, self.columna);
 
     def tipoArgumentos(self, argTipo, i:int, console:Console, scope:Scope):
-        if (isinstance(self.parametros[i], Arreglo)):
+        if (isinstance(self.parametros[i], DeclaracionArreglo)):
             if (argTipo != self.devolverTipo(self.parametros[i].dimension.tipo)):
                 # ERROR. Tipos incompatibles. se esperaba un str(paramTipo) y se encontró un str(argTipo) 
                 _error = _Error(f'Argumento incompatible. se esperaba un {self.devolverTipo(self.parametros[i].dimension.tipo).name} y se encontró un {argTipo.name}', scope.ambito, self.linea, self.columna, datetime.now());

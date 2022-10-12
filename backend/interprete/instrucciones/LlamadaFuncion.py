@@ -13,7 +13,11 @@ class LlamadaFuncion(Instruccion):
         self.argumentos = argumentos;
     
     def ejecutar(self, console: Console, scope: Scope):
+        self.generador.addComentario('LLAMADA A FUNCIÓN');
         newScope = Scope(scope.getGlobal(), 'Funcion');
+        newScope.size = 1;
+        tempEntorno:str = self.generador.newTemp();
+        self.generador.addOperacion(tempEntorno, 'SP', scope.size, '+');
         # obtenemos la función 
         funcion:Funcion = scope.getFuncion(self.id, self.linea, self.columna);
         # verificando si la cantidad de argumentos son == a la cantidad de parámetros de la función
@@ -23,9 +27,11 @@ class LlamadaFuncion(Instruccion):
             raise Exception(_error);
         for i in range(len(self.argumentos)):
             if (isinstance(self.argumentos[i], Puntero)):
-                val = self.argumentos[i].expresion.ejecutar(console, scope);
+                self.argumentos[i].expresion.generador = self.generador;
+                val:RetornoExpresion = self.argumentos[i].expresion.ejecutar(console, scope);
             else:
-                val = self.argumentos[i].ejecutar(console, scope);
+                self.argumentos[i].generador = self.generador;
+                val:RetornoExpresion = self.argumentos[i].ejecutar(console, scope);
             # verificando el tipo correcto del argumento
             funcion.tipoArgumentos(val.tipo, i, console, scope);
             # obtenemos el id del parametro correspondiente

@@ -19,7 +19,8 @@ from ..instrucciones.Loop import Loop
 from ..expresiones.FuncionesNativas import Abs, Clone, Sqrt, ToString, Chars
 from ..instrucciones.While import While
 from ..expresiones.Casteo import Casteo
-from ..instrucciones.Arreglo import AsignacionArreglo, Dimension, Arreglo, WithCapacity
+from ..instrucciones.DeclaracionArreglo import DeclaracionArreglo, AsignacionArreglo, Dimension, WithCapacity
+from ..expresiones.Arreglo import Arreglo
 from ..expresiones.Expresion import Expresion
 from interprete.instrucciones.FuncionesVector import Push, Insert, Remove, Contains, Longitud, Capacity
 from interprete.instrucciones.Instruccion import Instruccion
@@ -185,10 +186,10 @@ def p_declaracion(p):
         | LET IDENTIFICADOR igualacion
     """
     if (len(p) == 7):
-        if (isinstance(p[6], Expresion) or isinstance(p[6], Instruccion)):
+        if (isinstance(p[6], Arreglo)):
+            p[0] = DeclaracionArreglo(True, p[3], p[5], p[6], False, None, p.lineno(1), p.lexpos(1));
+        elif (isinstance(p[6], Expresion) or isinstance(p[6], Instruccion)):
             p[0] = Declaracion(True, p[3], p[5], p[6], p.lineno(1), p.lexpos(1));
-        elif(isinstance(p[6], tuple) == True or (isinstance(p[6], Dimension) and p[6].esVector == False)):
-            p[0] = Arreglo(True, p[3], p[5], p[6], False, None, p.lineno(1), p.lexpos(1));
         elif(isinstance(p[6], list) == True or (isinstance(p[6], Dimension) and p[6].esVector == True)):
             p[0] = Arreglo(True, p[3], p[5], p[6], True, None, p.lineno(1), p.lexpos(1));
         elif(p[6] == 'new'):
@@ -198,10 +199,10 @@ def p_declaracion(p):
         elif (isinstance(p[6], ExpresionesStruct)):
             p[0] = InstanciaStruct(True, p[3], p[5], p[6], p.lineno(1), p.lexpos(1));
     elif (len(p) == 5):
-        if (isinstance(p[4], Expresion) or isinstance(p[4], Instruccion)):
+        if (isinstance(p[4], Arreglo)):
+            p[0] = DeclaracionArreglo(True, p[3], None, p[4], False, None, p.lineno(1), p.lexpos(1));
+        elif (isinstance(p[4], Expresion) or isinstance(p[4], Instruccion)):
             p[0] = Declaracion(True, p[3], None, p[4], p.lineno(1), p.lexpos(1));
-        elif(isinstance(p[4], tuple) == True or (isinstance(p[4], Dimension) and p[4].esVector == False)):
-            p[0] = Arreglo(True, p[3], None, p[4], False, None, p.lineno(1), p.lexpos(1));
         elif(isinstance(p[4], list) == True or (isinstance(p[4], Dimension) and p[4].esVector == True)):
             p[0] = Arreglo(True, p[3], None, p[4], True, None, p.lineno(1), p.lexpos(1));
         elif(p[4] == 'new'):
@@ -211,10 +212,10 @@ def p_declaracion(p):
         elif (isinstance(p[4], ExpresionesStruct)):
             p[0] = InstanciaStruct(True, p[3], None, p[4], p.lineno(1), p.lexpos(1));
     elif (len(p) == 6):
-        if (isinstance(p[5], Expresion) or isinstance(p[5], Instruccion)):
+        if (isinstance(p[5], Arreglo)):
+            p[0] = DeclaracionArreglo(True, p[2], p[4], p[5], False, None, p.lineno(1), p.lexpos(1));
+        elif (isinstance(p[5], Expresion) or isinstance(p[5], Instruccion)):
             p[0] = Declaracion(False, p[2], p[4], p[5], p.lineno(1), p.lexpos(1));
-        elif(isinstance(p[5], tuple) == True or (isinstance(p[5], Dimension) and p[5].esVector == False)):
-            p[0] = Arreglo(False, p[2], p[4], p[5], False, None, p.lineno(1), p.lexpos(1));
         elif(isinstance(p[5], list) == True or (isinstance(p[5], Dimension) and p[5].esVector == True)):
             p[0] = Arreglo(False, p[2], p[4], p[5], True, None, p.lineno(1), p.lexpos(1));
         elif(p[5] == 'new'):
@@ -224,10 +225,10 @@ def p_declaracion(p):
         elif (isinstance(p[5], ExpresionesStruct)):
             p[0] = InstanciaStruct(True, p[2], p[4], p[5], p.lineno(1), p.lexpos(1));
     else:
-        if (isinstance(p[3], Expresion) or isinstance(p[3], Instruccion)):
+        if (isinstance(p[3], Arreglo)):
+            p[0] = DeclaracionArreglo(True, p[2], None, p[3], False, None, p.lineno(1), p.lexpos(1));
+        elif (isinstance(p[3], Expresion) or isinstance(p[3], Instruccion)):
             p[0] = Declaracion(False, p[2], None, p[3], p.lineno(1), p.lexpos(1));
-        elif(isinstance(p[3], tuple) == True or (isinstance(p[3], Dimension) and p[3].esVector == False)):
-            p[0] = Arreglo(False, p[2], None, p[3], False, None, p.lineno(1), p.lexpos(1));
         elif(isinstance(p[3], list) == True or (isinstance(p[3], Dimension) and p[3].esVector == True)):
             p[0] = Arreglo(False, p[2], None, p[3], True, None, p.lineno(1), p.lexpos(1));
         elif(p[3] == 'new'):
@@ -292,7 +293,6 @@ def p_type_vector(p):
 def p_igualacion(p):
     """
     igualacion : IGUALACION expresion
-        | IGUALACION CORCHETE_ABRE lista_arreglo CORCHETE_CIERRA
         | IGUALACION declaracion_vector
         | IGUALACION instancia_struct
     """
@@ -375,7 +375,7 @@ def p_expresiones_arreglo(p):
     if (len(p) == 2):
         p[0] = p[1];
     else:
-        p[0] = Dimension(p[1], [p[3]], False);
+        p[0] = {'expresion': p[1], 'cantidad': p[3]};
 
 # unidad aritmética
 def p_expresion_aritmetica(p):
@@ -469,7 +469,7 @@ def p_expresion_terminales(p):
         p[0] = Literal(p[1], TipoDato.FLOAT64, p.lineno(1), p.lexpos(1));
     elif (p[1] == 'true' or p[1] == 'false'):
         # bools
-        boolean = True if (p[1] == 'true') else False;
+        boolean = '1' if (p[1] == 'true') else '0';
         p[0] = Literal(boolean, TipoDato.BOOLEAN, p.lineno(1), p.lexpos(1));
     else:
         # chars
@@ -494,6 +494,12 @@ def p_expresion_identificador(p):
         p[0] = AccesoArreglo(p[1], p[2], p.lineno(1), p.lexpos(1));
     else:
         p[0] = AccesoStruct(p[1], p[3], p.lineno(1), p.lexpos(1));
+
+def p_expresion_arreglo(p):
+    '''
+    expresion : CORCHETE_ABRE lista_arreglo CORCHETE_CIERRA
+    '''
+    p[0] = Arreglo(p[2], p.lineno(1), p.lexpos(1));
 
 def p_indice_arreglo(p):
     """

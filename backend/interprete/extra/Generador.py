@@ -44,7 +44,10 @@ class Generador:
 
     # añade una etiqueta al código a generar
     def addEtq(self, etiqueta:str) -> None:
-        self.codigo.append(f'{etiqueta}:');
+        if(':' in etiqueta):
+            self.codigo.append(etiqueta);
+        else:
+            self.codigo.append(f'{etiqueta}:');
     
     # añade expresion aritmética
     def addOperacion(self, temp:str, izq:str, der:str, operador:str) -> None:
@@ -88,16 +91,27 @@ class Generador:
 
     # añade un if
     def addIf(self, izq:str, der:str, operador:str, etq:str) -> None:
-        self.codigo.append(f'if({izq} {operador} {der}) goto {etq}');
+        self.codigo.append(f'if({izq} {operador} {der}) goto {etq};');
 
     # añade una impresión en C
     def addPrintf(self, tipo:str, valor:str) -> None:
-        self.codigo.append('printf("%{tipo}", {valor});');
+        self.codigo.append(f'printf("%{tipo}", {valor});');
     
     # añade salto de línea
     def newLine(self) -> None:
-        self.codigo.append('printf("%c",10)');
+        self.codigo.append('printf("%c",10);');
 
     # añade un error semántico
     def errorSem(self, mensaje:str) -> None:
         self.codigo.append(mensaje);
+
+    # añade comentarios
+    def addComentario(self, mensaje:str) -> None:
+        self.codigo.append(f'/*{mensaje}*/');
+
+    def cambiarCodigo(self, mensaje:str) -> bool:
+        for i in range(len(self.codigo)):
+            if (self.codigo[i] == '/*-1*/'):
+                self.codigo[i] = mensaje;
+                return True;
+        return False;

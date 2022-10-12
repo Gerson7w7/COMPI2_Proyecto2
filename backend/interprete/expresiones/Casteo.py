@@ -6,37 +6,38 @@ from ..extra.Retorno import RetornoExpresion
 from datetime import datetime
 
 class Casteo(Expresion):
-    def __init__(self, expresion, tipo:str, linea, columna):
+    def __init__(self, expresion:Expresion, tipo:str, linea, columna):
         super().__init__(linea, columna);
         self.expresion = expresion;
         self.tipo = tipo;
 
     def ejecutar(self, console: Console, scope: Scope):
         # recuperamos la expresion
-        val = self.expresion.ejecutar(console, scope);
+        self.expresion.generador = self.generador;
+        val:RetornoExpresion = self.expresion.ejecutar(console, scope);
         if (self.tipo == 'i64' or self.tipo == 'usize'):
-            return RetornoExpresion(int(val.valor), TipoDato.INT64, None);
+            val.tipo = TipoDato.INT64;
+            return val;
         elif (self.tipo == 'f64'):
-            try:
-                return RetornoExpresion(float(val.valor), TipoDato.FLOAT64, None);
-            except:
-                # ERROR. no se puede convertir en bool
-                _error = _Error(f'La expresión {val.valor} no se puede convertir a float', scope.ambito, self.linea, self.columna, datetime.now())
-                raise Exception(_error);
+            val.tipo == TipoDato.FLOAT64;
+            return val;
         elif (self.tipo == 'bool'):
-            try:
-                return RetornoExpresion(bool(val.valor), TipoDato.BOOLEAN, None);   
-            except:
-                # ERROR. no se puede convertir en bool
-                _error = _Error(f'La expresión {val.valor} no se puede convertir a bool', scope.ambito, self.linea, self.columna, datetime.now())
-                raise Exception(_error);
+            '''
+            if (val.valor == 1) goto Ltrue;
+            goto Lfalse;
+            '''
+            val.tipo = TipoDato.BOOLEAN;
+            val.trueEtq:str = self.generador.newEtq();
+            val.falseEtq:str = self.generador.newEtq();
+            self.generador.addIf(val.valor, '1', '==', val.trueEtq);
+            self.generador.addGoto(val.falseEtq);
+            return val;
         elif (self.tipo == 'char'):
-            if (len(val.valor) == 1):
-                return RetornoExpresion(str(val.valor), TipoDato.CHAR, None);
-            # ERROR. no se puede convertir en char
-            _error = _Error(f'La expresión {val.valor} no se puede convertir a char', scope.ambito, self.linea, self.columna, datetime.now())
-            raise Exception(_error);
+            val.tipo = TipoDato.CHAR;
+            return val;
         elif (self.tipo == 'string'):
-            return RetornoExpresion(str(val.valor), TipoDato.STRING, None);
+            val.tipo = TipoDato.STRING;
+            return val;
         elif (self.tipo == 'str'):
-            return RetornoExpresion(str(val.valor), TipoDato.STR, None);
+            val.tipo = TipoDato.STR;
+            return val;

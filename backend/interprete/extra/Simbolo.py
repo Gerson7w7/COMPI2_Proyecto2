@@ -4,9 +4,11 @@ class AtributosArreglo:
     def __init__(self, esVector:bool, with_capacity:int) -> None:
         self.esVector = esVector;
         self.with_capacity = with_capacity;
+        self.dimensiones = [];
 
 class Simbolo:
-    def __init__(self, id: str, tipo: TipoDato, mut:bool, atrArr:AtributosArreglo, posicion:int):
+    def __init__(self, valor:str, id: str, tipo: TipoDato, mut:bool, atrArr:AtributosArreglo, posicion:int):
+        self.valor = valor;
         self.id = id;
         self.tipo = tipo;
         self.mut = mut;

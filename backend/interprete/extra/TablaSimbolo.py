@@ -1,4 +1,4 @@
-from ..instrucciones.Arreglo import Dimension
+from ..instrucciones.DeclaracionArreglo import Dimension
 
 class TablaSimbolo:
     def __init__(self, identificador:str, tipo:str, tipoDato:str, ambito:str, linea:int, columna:int):

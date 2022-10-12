@@ -3,12 +3,10 @@ from datetime import datetime
 
 class Console:
     def __init__(self):
-        self.output = "";
         self.errores = [];
         self.simbolos = [];
-
-    def append(self, text):
-        self.output += text;
+        self.breaks = [];
+        self.continues = [];
 
     def error(self, error):
         self.errores.append(error); 
