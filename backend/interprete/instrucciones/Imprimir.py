@@ -34,8 +34,9 @@ class Imprimir(Instruccion):
                 i += 1;
                 if (esExp and esArr):
                     '''
+                    tempLim = val.valor + total;
                     Lloop:
-                        if (val.valor == total) goto Lsalida;
+                        if (val.valor == tempLim) goto Lsalida;
                         temp = HEAP[val.valor];
                         <código para imprimir>
                         val.valor = val.valor + 1;
@@ -47,11 +48,14 @@ class Imprimir(Instruccion):
                     total:int = 1;
                     for index in val.atrArr.dimensiones:
                         total *= index;
+                    #total -= 1;
+                    tempLim:str = self.generador.newTemp();
                     Lloop:str = self.generador.newEtq();
                     Lsalida:str = self.generador.newEtq();
                     temp:str = self.generador.newTemp();
+                    self.generador.addOperacion(tempLim, val.valor, total, '+');
                     self.generador.addEtq(Lloop);
-                    self.generador.addIf(val.valor, total, '==', Lsalida);
+                    self.generador.addIf(val.valor, tempLim, '==', Lsalida);
                     self.generador.getHeap(temp, val.valor);
                     self.imprimirExpresion(RetornoExpresion(temp, val.tipo, True));
                     self.generador.addPrintf('c', '(char)44'); # 44 = ,

@@ -35,7 +35,7 @@ class DeclaracionArreglo(Instruccion):
         atrArr = AtributosArreglo(False, None);
         for dim in self.dimension.dimensiones:
             atrArr.dimensiones.append(dim);
-        print("dimm::: " + str(atrArr.dimensiones))
+        atrArr.dimensiones.reverse();
         self.generador.addComentario('DECLARACION DE ARREGLO');
         self.valor.generador = self.generador;
         valor:RetornoExpresion = self.valor.ejecutar(console, scope);
