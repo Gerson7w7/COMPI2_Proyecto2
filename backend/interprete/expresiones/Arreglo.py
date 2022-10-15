@@ -1,3 +1,4 @@
+from ..extra.Simbolo import AtributosArreglo
 from ..extra.Retorno import RetornoExpresion
 from .Expresion import Expresion
 from ..extra.Console import Console, _Error
@@ -20,22 +21,32 @@ class Arreglo(Expresion):
         <código de la lista>
         '''
         self.generador.addComentario('ARREGLO');
-        self.reservarEspacio(self.valor);
+        self.reservarEspacio(self.valor, False);
         self.temp = self.generador.newTemp();
         tempRetorno:str = self.generador.newTemp();
         self.generador.addOperacion(self.temp, 'HP', '', '');
         self.generador.addOperacion(tempRetorno, self.temp, '', '');
         self.generador.addOperacion('HP', 'HP', self.contador, '+');
         self.recorrerLista(self.valor, console, scope);
-        return RetornoExpresion(tempRetorno, self.tipo, True); 
+        retorno = RetornoExpresion(tempRetorno, self.tipo, True);
+        atrArr = AtributosArreglo(False, None);
+        atrArr.dimensiones = self.dimensiones;
+        retorno.atrArr = atrArr;
+        return retorno;
 
-    def reservarEspacio(self, valor):
+    def reservarEspacio(self, valor, agregado):
         if (isinstance(valor, list)):
+            if (not agregado):
+                self.dimensiones.append(len(valor));
             for v in valor:
-                self.reservarEspacio(v);
+                self.reservarEspacio(v, agregado);
+                agregado = True;
         elif(isinstance(valor, dict)):
+            if (not agregado):
+                self.dimensiones.append(valor.get('cantidad'));
             for i in range(valor.get('cantidad')):
-                self.reservarEspacio(valor.get('expresion'));
+                self.reservarEspacio(valor.get('expresion'), agregado);
+                agregado = True;
         else:
             self.contador += 1;
 

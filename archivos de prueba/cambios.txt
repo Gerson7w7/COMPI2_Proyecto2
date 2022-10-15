@@ -1,5 +1,5 @@
 Acceso: listo
-AccesoArreglo: ::::PENDIENTE::::
+AccesoArreglo: listo
 AccesoStruct: ::::PENDIENTE::::
 Aritmetica: listo
 Casteo: listo
@@ -9,15 +9,15 @@ FuncionesNativias:
     SQRT: listo
     ToString: listo
     Clone: listo
-    Chars: ::::PENDIENTE::::
+    Chars: listo
 Literal: listo
 Logico: listo
 Relacional: listo
-Arreglo: ::::PENDIENTE::::
+Arreglo: listo
 Bloque: listo
 Declaración: listo
 Asignación: listo
-ForIn: ::::PENDIENTE::::
+ForIn: listo
 Funcion: ::::PENDIENTE::::
 FuncionesVector: ::::PENDIENTE::::
 IfElse: listo

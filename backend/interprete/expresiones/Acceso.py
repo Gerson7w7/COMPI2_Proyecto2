@@ -50,7 +50,6 @@ class AccesoArreglo(Expresion):
         '''
         tIndice = 0;
         temp = STACK[val.posicion];
-        --------------------------->tempArr = HEAP[temp];
         t1 = i*iDim;
         tIndice = tIndice + t1;
         ...

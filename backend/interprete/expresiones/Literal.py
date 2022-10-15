@@ -1,3 +1,4 @@
+from ..extra.Simbolo import AtributosArreglo
 from .Expresion import Expresion
 from ..extra.Tipos import TipoDato
 from ..extra.Console import Console
@@ -30,7 +31,11 @@ class Literal(Expresion):
                 self.generador.ptrNextHeap();
             self.generador.setHeap('HP', '-1');
             self.generador.ptrNextHeap();
-            return RetornoExpresion(newTemp, TipoDato.STR, True);
+            retorno = RetornoExpresion(newTemp, TipoDato.STR, True);
+            atrArr = AtributosArreglo(False, None);
+            atrArr.dimensiones = [len(self.valor)];
+            retorno.atrArr = atrArr;
+            return retorno;
         elif (self.tipo == TipoDato.BOOLEAN):
             '''
             TRUE:

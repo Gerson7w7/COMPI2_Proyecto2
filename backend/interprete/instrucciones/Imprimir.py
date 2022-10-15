@@ -16,6 +16,7 @@ class Imprimir(Instruccion):
         i:int = 0;
         esArr:bool = False;
         esExp:bool = False;
+        self.generador.addComentario('=== IMPRIMIENDO ===');
         for c in self.cadena:
             if (c == '{'): esExp = True; pass;
             elif (c == ':'): 
@@ -48,7 +49,6 @@ class Imprimir(Instruccion):
                     total:int = 1;
                     for index in val.atrArr.dimensiones:
                         total *= index;
-                    #total -= 1;
                     tempLim:str = self.generador.newTemp();
                     Lloop:str = self.generador.newEtq();
                     Lsalida:str = self.generador.newEtq();
@@ -78,12 +78,28 @@ class Imprimir(Instruccion):
             '''
             self.generador.addComentario('IMPRIMIENDO CHAR');
             self.generador.addPrintf('c', f'(char){val.valor}');
-        elif(val.tipo == TipoDato.INT64 or val.tipo == TipoDato.BOOLEAN):
+        elif(val.tipo == TipoDato.INT64):
             '''
             printf("%d", (int)"valor.valor");
             '''
             self.generador.addComentario('IMPRIMIENDO INT Y BOOLEAN');
             self.generador.addPrintf('d', f'(int){val.valor}');
+        elif(val.tipo == TipoDato.BOOLEAN):
+            '''
+            trueEtq:
+                printf("%d", (int)1);
+                goto Lsalida;
+            trueEtq:
+                printf("%d", (int)1);
+            Lsalida:
+            '''
+            Lsalida:str = self.generador.newEtq();
+            self.generador.addEtq(val.trueEtq);
+            self.generador.addPrintf('d', '1');
+            self.generador.addGoto(Lsalida);
+            self.generador.addEtq(val.falseEtq);
+            self.generador.addPrintf('d', '0');
+            self.generador.addEtq(Lsalida);
         elif(val.tipo == TipoDato.FLOAT64):
             '''
             printf("%f", (double)"valor.valor");

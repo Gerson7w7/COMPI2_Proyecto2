@@ -74,43 +74,6 @@ class Scope:
                     _error = _Error(f'Una variable de tipo {val.tipo.name} no puede almacenar una expresión de tipo {valor.tipo.name}', ambito, linea, columna, datetime.now())
                     raise Exception(_error);
             scope = scope.padre;
-    
-    def setValorArreglo(self, id:str, valor, tipo, indices:list, linea:int, columna:int):
-        scope: Scope = self;
-        ambito:str = scope.ambito;
-        while(scope != None):
-            if (scope.variables.get(id) != None):
-                val:Simbolo = scope.variables.get(id);
-                if (val.tipo != tipo):
-                    # ERROR. Tipos imcompatible, un arreglo de tipo ... no puede contener una expresión de tipo ...
-                    _error = _Error(f'Tipos imcompatible, un arreglo de tipo {val.tipo.name} no puede contener una expresión de tipo {tipo.name}', ambito, linea, columna, datetime.now())
-                    raise Exception(_error);
-                if (not val.mut):
-                    # ERROR. Variable no mutable.
-                    _error = _Error(f'La variable {id} no es mutable', ambito, linea, columna, datetime.now())
-                    raise Exception(_error);
-                valNuevo = self.recorrerLista(valor, val.valor, indices, 0, ambito, linea, columna);
-                scope.variables.update({id: Simbolo(valNuevo, id, val.tipo, True, val.esVector, val.with_capacity, val.referencia)});
-                # si se pasó por referencia cambiamos también la original
-                if (val.referencia != None):
-                    ref = val.referencia;
-                    ref.scope.variables.update({ref.id : Simbolo(valNuevo, ref.id, val.tipo, ref.val.mut, ref.val.esVector, ref.val.with_capacity, ref.val.referencia)});
-            scope = scope.padre;
-
-    def recorrerLista(self, valor, lista, indices:list, iAux, ambito:str, linea:int, columna:int):
-        # verificamos que aun se ana lista
-        if (iAux < len(indices)):
-            try:
-                lista[indices[iAux]] = self.recorrerLista(valor, lista[indices[iAux]], indices, iAux + 1, ambito, linea, columna);
-                return lista;
-            except:
-                # ERROR. Indice fuera de rango
-                print("INDICE FUERA DE RANGO")
-                _error = _Error(f'Indice fuera de rango', ambito, linea, columna, datetime.now())
-                raise Exception(_error);
-        else:
-            # llegado a este punto es la expresion a cambiar
-            return valor;
 
     def guardarFuncion(self, id:str, fn, tipo_retorno:TipoDato, linea:int, columna:int):
         scope: Scope = self;

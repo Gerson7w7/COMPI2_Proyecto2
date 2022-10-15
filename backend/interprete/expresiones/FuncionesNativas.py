@@ -37,7 +37,7 @@ class Abs(Expresion):
         raise Exception(_error);
 
 class Sqrt(Expresion):
-    def __init__(self, expresion:Expresion, linea, columna):
+    def __init__(self, expresion:Expresion, linea:int, columna:int):
         super().__init__(linea, columna)
         self.expresion = expresion;
 
@@ -90,7 +90,7 @@ class ToString(Expresion):
         raise Exception(_error);
 
 class Clone(Expresion):
-    def __init__(self, expresion:Expresion, linea, columna):
+    def __init__(self, expresion:Expresion, linea:int, columna:int):
         super().__init__(linea, columna);
         self.expresion = expresion;
 
@@ -101,19 +101,19 @@ class Clone(Expresion):
         return copy.deepcopy(self.expresion.ejecutar(console, scope));
 
 class Chars(Expresion):
-    def __init__(self, expresion, linea, columna):
+    def __init__(self, expresion:Expresion, linea:int, columna:int):
         super().__init__(linea, columna)
         self.expresion = expresion;
 
     def ejecutar(self, console: Console, scope: Scope):
         # ejecutamos la expresión
-        val = self.expresion.ejecutar(console, scope);
+        self.expresion.generador = self.generador;
+        val:RetornoExpresion = self.expresion.ejecutar(console, scope);
         if (val.tipo != TipoDato.STRING and val.tipo != TipoDato.STR):
             # ERROR. Solo se puede convertir a una lista de caracteres si se trata de un string
             _error = _Error(f'Solo se puede convertir a una lista de caracteres si se trata de un string o &str, no de un {val.tipo.name}', scope.ambito, self.linea, self.columna, datetime.now())
             raise Exception(_error);
-        # pasamos la cadena a una lista
-        listaChar:list = []
-        for c in val.valor:
-            listaChar.append(c);
-        return RetornoExpresion(listaChar, val.tipo, None);
+        # cambiamos el tipo de la expresión
+        val.tipo = TipoDato.CHAR;
+        print("ola ma" + str(val.atrArr))
+        return val;

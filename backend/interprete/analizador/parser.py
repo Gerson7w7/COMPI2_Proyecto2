@@ -714,14 +714,11 @@ def p_iterables(p):
     """
     iterables : expresion PUNTO PUNTO expresion
         | expresion
-        | CORCHETE_ABRE lista_arreglo CORCHETE_CIERRA
     """
     if (len(p) == 2):
         p[0] = p[1];
     elif (len(p) == 5):
-        lista = []; lista.append(p[1]); lista.append(p[4]); p[0] = lista;
-    else:
-        p[0] = p[2];
+        p[0] = {'inferior': p[1], 'superior': p[4]};
 
 def p_funciones_vector(p):
     """

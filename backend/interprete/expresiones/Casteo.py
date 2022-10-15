@@ -15,13 +15,13 @@ class Casteo(Expresion):
         # recuperamos la expresion
         self.expresion.generador = self.generador;
         val:RetornoExpresion = self.expresion.ejecutar(console, scope);
-        if (self.tipo == 'i64' or self.tipo == 'usize'):
+        if (self.tipo == TipoDato.INT64):
             val.tipo = TipoDato.INT64;
             return val;
-        elif (self.tipo == 'f64'):
+        elif (self.tipo == TipoDato.FLOAT64):
             val.tipo == TipoDato.FLOAT64;
             return val;
-        elif (self.tipo == 'bool'):
+        elif (self.tipo == TipoDato.BOOLEAN):
             '''
             if (val.valor == 1) goto Ltrue;
             goto Lfalse;
@@ -32,12 +32,12 @@ class Casteo(Expresion):
             self.generador.addIf(val.valor, '1', '==', val.trueEtq);
             self.generador.addGoto(val.falseEtq);
             return val;
-        elif (self.tipo == 'char'):
+        elif (self.tipo == TipoDato.CHAR):
             val.tipo = TipoDato.CHAR;
             return val;
-        elif (self.tipo == 'string'):
+        elif (self.tipo == TipoDato.STRING):
             val.tipo = TipoDato.STRING;
             return val;
-        elif (self.tipo == 'str'):
+        elif (self.tipo == TipoDato.STR):
             val.tipo = TipoDato.STR;
             return val;

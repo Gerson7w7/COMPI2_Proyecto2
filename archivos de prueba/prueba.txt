@@ -12,8 +12,6 @@ fn main(){
     println!("_mod: {} ", _mod);
     let _pow : i64 = i64::pow(3, 3);
     println!("_pow: {} ", _pow);
-    let _powf : f64 = f64::powf(3.2, 3.0);
-    println!("_powf: {} ", _powf);
     let negEntero = -10;
     println!("negEntero: {} ", negEntero);
     let negDecimal = -5.10;
@@ -244,6 +242,7 @@ fn main(){
         print!("{} es mi favorito, ", letra);
         //Imprime: perro es mi favorito, gato es mi favorito, tortuga es mi favorito,
     }
+    println!("");
 
     // Ejemplo 4 - variable cadena
     let cadena = "OLC2";
