@@ -28,6 +28,7 @@ from ..instrucciones.ForIn import ForIn
 from ..instrucciones.Funcion import Funcion
 from ..instrucciones.LlamadaFuncion import LlamadaFuncion, Puntero
 from ..instrucciones.Struct import AsignacionStruct, InstanciaStruct, Struct, ExpresionesStruct
+from interprete.expresiones.Vector import Vector
 
 tokens = lexer.tokens;
 
@@ -293,7 +294,6 @@ def p_type_vector(p):
 def p_igualacion(p):
     """
     igualacion : IGUALACION expresion
-        | IGUALACION declaracion_vector
         | IGUALACION instancia_struct
     """
     if (len(p) == 3):
@@ -327,19 +327,6 @@ def p_arg_struct(p):
     arg_struct : IDENTIFICADOR DOS_PUNTOS expresion
     """
     p[0] = Declaracion(True, p[1], None, p[3], p.lineno(1), p.lexpos(1));
-
-def p_declaracion_vector(p):
-    """
-    declaracion_vector : VEC NOT CORCHETE_ABRE lista_vector CORCHETE_CIERRA
-        | VEC_OBJ DOS_PUNTOS DOS_PUNTOS NEW PARENTESIS_ABRE PARENTESIS_CIERRA
-        | VEC_OBJ DOS_PUNTOS DOS_PUNTOS WITH_CAPACITY PARENTESIS_ABRE expresion PARENTESIS_CIERRA
-    """
-    if (len(p) == 8):
-        p[0] = WithCapacity(True, p[6]);
-    else:
-        if (isinstance(p[4], Dimension)):
-            p[4].esVector = True;
-        p[0] = p[4];
 
 def p_lista_arreglo(p):
     """
@@ -498,8 +485,18 @@ def p_expresion_identificador(p):
 def p_expresion_arreglo(p):
     '''
     expresion : CORCHETE_ABRE lista_arreglo CORCHETE_CIERRA
+        | VEC NOT CORCHETE_ABRE lista_vector CORCHETE_CIERRA
+        | VEC_OBJ DOS_PUNTOS DOS_PUNTOS NEW PARENTESIS_ABRE PARENTESIS_CIERRA
+        | VEC_OBJ DOS_PUNTOS DOS_PUNTOS WITH_CAPACITY PARENTESIS_ABRE expresion PARENTESIS_CIERRA
     '''
-    p[0] = Arreglo(p[2], p.lineno(1), p.lexpos(1));
+    if (len(p) == 4):
+        p[0] = Arreglo(p[2], p.lineno(1), p.lexpos(1));
+    elif (len(p) == 6):
+        pass;
+    elif (len(p) == 7):
+        p[0] = Vector(None, None, p.lineno(1), p.lexpos(1));
+    elif (len(p) == 8):
+        pass;
 
 def p_indice_arreglo(p):
     """

@@ -5,19 +5,42 @@ from ..extra.Console import Console, _Error
 from ..extra.Scope import Scope
 from datetime import datetime
 
-class Arreglo(Expresion):
-    def __init__(self, valor:list, linea:int, columna:int):
+class Vector(Expresion):
+    def __init__(self, valor:list, with_capacity:int, linea:int, columna:int):
         super().__init__(linea, columna);
         self.valor = valor;
+        self.with_capacity = with_capacity;
         self.contador = 0;
         self.temp = '';
         self.dimensiones = [];
         self.tipo = None;
 
     def ejecutar(self, console: Console, scope:Scope):
+        if (self.valor == None and self.with_capacity == None):
+            # Vec::new();
+            '''
+            self.temp = HP;
+            tempRetorno = self.temp;
+            HP = HP + 1;
+            <código de la lista>
+            '''
+            self.generador.addComentario('VECTOR');
+            self.temp = self.generador.newTemp();
+            tempRetorno:str = self.generador.newTemp();
+            self.generador.addOperacion(self.temp, 'HP', '', '');
+            self.generador.addOperacion(tempRetorno, self.temp, '', '');
+            self.generador.addOperacion('HP', 'HP', '1', '+');
+            retorno = RetornoExpresion(tempRetorno, self.tipo, True);
+            atrArr = AtributosArreglo(True, 2);
+            atrArr.dimensiones = [1];
+            retorno.atrArr = atrArr;
+        elif(self.valor != None):
+            pass;
+        elif(self.with_capacity != None):
+            pass;
+        return retorno;
         '''
         self.temp = HP;
-        tempRetorno = self.temp;
         HP = HP + self.contador
         <código de la lista>
         '''
@@ -33,23 +56,6 @@ class Arreglo(Expresion):
         atrArr = AtributosArreglo(False, None);
         atrArr.dimensiones = self.dimensiones;
         retorno.atrArr = atrArr;
-        return retorno;
-
-    def reservarEspacio(self, valor, agregado):
-        if (isinstance(valor, list)):
-            if (not agregado):
-                self.dimensiones.append(len(valor));
-            for v in valor:
-                self.reservarEspacio(v, agregado);
-                agregado = True;
-        elif(isinstance(valor, dict)):
-            if (not agregado):
-                self.dimensiones.append(valor.get('cantidad'));
-            for i in range(valor.get('cantidad')):
-                self.reservarEspacio(valor.get('expresion'), agregado);
-                agregado = True;
-        else:
-            self.contador += 1;
 
     def recorrerLista(self, valor, console:Console, scope:Scope):
         if (isinstance(valor, list)):

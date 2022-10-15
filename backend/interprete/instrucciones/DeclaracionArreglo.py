@@ -39,7 +39,7 @@ class DeclaracionArreglo(Instruccion):
         self.generador.addComentario('DECLARACION DE ARREGLO');
         self.valor.generador = self.generador;
         valor:RetornoExpresion = self.valor.ejecutar(console, scope);
-        pos:int = scope.crearVariable(valor.valor, self.id, 'Arreglo', valor.tipo, self.mut, atrArr, self.linea, self.columna, console);
+        pos:int = scope.crearVariable(valor.valor, self.id, 'Arreglo/Vector', valor.tipo, self.mut, atrArr, self.linea, self.columna, console);
         self.generador.setStack(pos, valor.valor);
 
 class AsignacionArreglo(Instruccion):
