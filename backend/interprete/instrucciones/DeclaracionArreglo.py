@@ -18,28 +18,37 @@ class WithCapacity:
         self.capacidad = capacidad;
 
 class DeclaracionArreglo(Instruccion):
-    def __init__(self, mut:bool, id:str, dimension:Dimension, valor:Expresion, esVector:bool, with_capacity:int, linea:int, columna:int):
+    def __init__(self, mut:bool, id:str, dimension:Dimension, valor:Expresion, linea:int, columna:int):
         super().__init__(linea, columna);
         self.mut = mut;
         self.id = id;
         self.dimension = dimension;
         self.valor = valor;
-        self.esVector = esVector;
-        self.with_capacity = with_capacity;
 
     def ejecutar(self, console: Console, scope):
         '''
         <código de arreglo>
         STACK[pos] = valor.valor; 
         '''
-        atrArr = AtributosArreglo(False, None);
-        for dim in self.dimension.dimensiones:
-            atrArr.dimensiones.append(dim);
-        atrArr.dimensiones.reverse();
         self.generador.addComentario('DECLARACION DE ARREGLO');
         self.valor.generador = self.generador;
         valor:RetornoExpresion = self.valor.ejecutar(console, scope);
-        pos:int = scope.crearVariable(valor.valor, self.id, 'Arreglo/Vector', valor.tipo, self.mut, atrArr, self.linea, self.columna, console);
+        if (self.dimension != None and not self.dimension.esVector):
+            atrArr = AtributosArreglo(False, None);
+            for dim in self.dimension.dimensiones:
+                atrArr.dimensiones.append(dim);
+            atrArr.dimensiones.reverse();
+            print(str(atrArr.dimensiones) + ' != ' + str(valor.atrArr.dimensiones))
+            if (atrArr.dimensiones != valor.atrArr.dimensiones):
+                _error = _Error(f'Las dimensiones de la expresión no son iguales a las indicadas.', scope.ambito, self.linea, self.columna, datetime.now())
+                raise Exception(_error);
+        if (valor.atrArr.esVector):
+            print("sisoiii");
+            print("dim:: " + str(valor.atrArr.dimensiones))
+            print("capacity:: " + str(valor.atrArr.with_capacity))
+            pos:int = scope.crearVariable(valor.valor, self.id, 'Vector', valor.tipo, self.mut, valor.atrArr, self.linea, self.columna, console);
+        else:
+            pos:int = scope.crearVariable(valor.valor, self.id, 'Arreglo', valor.tipo, self.mut, valor.atrArr, self.linea, self.columna, console);
         self.generador.setStack(pos, valor.valor);
 
 class AsignacionArreglo(Instruccion):

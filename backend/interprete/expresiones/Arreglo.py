@@ -6,7 +6,7 @@ from ..extra.Scope import Scope
 from datetime import datetime
 
 class Arreglo(Expresion):
-    def __init__(self, valor:list, linea:int, columna:int):
+    def __init__(self, valor:list or dict, linea:int, columna:int):
         super().__init__(linea, columna);
         self.valor = valor;
         self.contador = 0;
@@ -23,6 +23,8 @@ class Arreglo(Expresion):
         '''
         self.generador.addComentario('ARREGLO');
         self.reservarEspacio(self.valor, False);
+        print("paso por aki")
+        print("soi arrelgo: " + str(self.dimensiones))
         self.temp = self.generador.newTemp();
         tempRetorno:str = self.generador.newTemp();
         self.generador.addOperacion(self.temp, 'HP', '', '');
@@ -37,7 +39,7 @@ class Arreglo(Expresion):
 
     def reservarEspacio(self, valor, agregado):
         if (isinstance(valor, list)):
-            if (not agregado):
+            if (not agregado and len(valor) != 1):
                 self.dimensiones.append(len(valor));
             for v in valor:
                 self.reservarEspacio(v, agregado);

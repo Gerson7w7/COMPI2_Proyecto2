@@ -71,7 +71,6 @@ class Imprimir(Instruccion):
             self.generador.newLine();
 
     def imprimirExpresion(self, val:RetornoExpresion):
-        print("entré aki " + str(val.tipo))
         if(val.tipo == TipoDato.CHAR):
             '''
             printf("%c", 'val.valor');

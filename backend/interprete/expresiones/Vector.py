@@ -10,32 +10,43 @@ class Vector(Expresion):
         super().__init__(linea, columna);
         self.valor = valor;
         self.with_capacity = with_capacity;
-        self.contador = 0;
         self.temp = '';
-        self.dimensiones = [];
         self.tipo = None;
 
     def ejecutar(self, console: Console, scope:Scope):
+        # el vector siempre será de una dimensión
+        self.generador.addComentario('VECTOR');
         if (self.valor == None and self.with_capacity == None):
             # Vec::new();
             '''
             self.temp = HP;
-            tempRetorno = self.temp;
             HP = HP + 1;
+            '''
+            self.temp = self.generador.newTemp();
+            self.generador.addOperacion(self.temp, 'HP', '', '');
+            self.generador.addOperacion('HP', 'HP', '1', '+');
+            retorno = RetornoExpresion(self.temp, self.tipo, True);
+            atrArr = AtributosArreglo(True, 1);
+            atrArr.dimensiones = [0];
+            retorno.atrArr = atrArr;
+        elif(self.valor != None):
+            # vec![exp, exp, exp];
+            '''
+            self.temp = HP;
+            tempRetorno = self.temp;
+            HP = HP + len(self.valor)
             <código de la lista>
             '''
-            self.generador.addComentario('VECTOR');
             self.temp = self.generador.newTemp();
             tempRetorno:str = self.generador.newTemp();
             self.generador.addOperacion(self.temp, 'HP', '', '');
             self.generador.addOperacion(tempRetorno, self.temp, '', '');
-            self.generador.addOperacion('HP', 'HP', '1', '+');
+            self.generador.addOperacion('HP', 'HP', len(self.valor), '+');
+            self.recorrerLista(self.valor, console, scope);
             retorno = RetornoExpresion(tempRetorno, self.tipo, True);
-            atrArr = AtributosArreglo(True, 2);
-            atrArr.dimensiones = [1];
+            atrArr = AtributosArreglo(True, len(self.valor) + 1);
+            atrArr.dimensiones = [len(self.valor)];
             retorno.atrArr = atrArr;
-        elif(self.valor != None):
-            pass;
         elif(self.with_capacity != None):
             pass;
         return retorno;
@@ -60,21 +71,32 @@ class Vector(Expresion):
     def recorrerLista(self, valor, console:Console, scope:Scope):
         if (isinstance(valor, list)):
             for v in valor:
-                self.recorrerLista(v, console, scope);
+                v.generador = self.generador;
+                val:RetornoExpresion = v.ejecutar(console, scope);
+                if (self.tipo == None):
+                    self.tipo = val.tipo;
+                elif(self.tipo != val.tipo):
+                    _error = _Error(f'Los arreglos tienen que ser de un solo tipo. Se obtuvo {self.tipo.name} y {val.tipo.name}', 'Arreglo', self.linea, self.columna, datetime.now());
+                    raise Exception(_error);
+                '''
+                HEAP[self.temp] = val.valor;
+                self.temp = self.temp + 1;
+                '''
+                self.generador.setHeap(self.temp, val.valor);
+                self.generador.addOperacion(self.temp, self.temp, '1', '+');
         elif(isinstance(valor, dict)):
             for i in range(valor.get('cantidad')):
-                self.recorrerLista(valor.get('expresion'), console, scope);
-        else:
-            valor.generador = self.generador;
-            val:RetornoExpresion = valor.ejecutar(console, scope);
-            if (self.tipo == None):
-                self.tipo = val.tipo;
-            elif(self.tipo != val.tipo):
-                _error = _Error(f'Los arreglos tienen que ser de un solo tipo. Se obtuvo {self.tipo.name} y {val.tipo.name}', 'Arreglo', self.linea, self.columna, datetime.now());
-                raise Exception(_error);
-            '''
-            HEAP[self.temp] = val.valor;
-            self.temp = self.temp + 1;
-            '''
-            self.generador.setHeap(self.temp, val.valor);
-            self.generador.addOperacion(self.temp, self.temp, '1', '+');
+                v = valor.get('expresion');
+                v.generador = self.generador;
+                val:RetornoExpresion = v.ejecutar(console, scope);
+                if (self.tipo == None):
+                    self.tipo = val.tipo;
+                elif(self.tipo != val.tipo):
+                    _error = _Error(f'Los arreglos tienen que ser de un solo tipo. Se obtuvo {self.tipo.name} y {val.tipo.name}', 'Arreglo', self.linea, self.columna, datetime.now());
+                    raise Exception(_error);
+                '''
+                HEAP[self.temp] = val.valor;
+                self.temp = self.temp + 1;
+                '''
+                self.generador.setHeap(self.temp, val.valor);
+                self.generador.addOperacion(self.temp, self.temp, '1', '+');
