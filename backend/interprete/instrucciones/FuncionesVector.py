@@ -1,3 +1,4 @@
+from ..expresiones.Expresion import Expresion
 from .DeclaracionArreglo import Dimension
 from ..extra.Tipos import TipoDato
 from ..extra.Simbolo import Simbolo
@@ -8,32 +9,45 @@ from ..extra.Retorno import RetornoExpresion
 from datetime import datetime
 
 class Push(Instruccion):
-    def __init__(self, id, expresion, linea: int, columna: int):
+    def __init__(self, id:Expresion, expresion:Expresion, linea: int, columna: int):
         super().__init__(linea, columna);
         self.id = id;
         self.expresion = expresion;
 
     def ejecutar(self, console: Console, scope: Scope):
+        '''
+        <código de valExp>
+        <código de valId>
+        temp = HP;
+        tempRetorno = HP;
+        HP = HP + espacioNuevo;
+        Lloop:
+            if (valId.valor == -1) goto Lsalida
+            tempVal = HEAP[valId.valor];
+            HEAP[temp] = tempVal;
+            valId.valor = valId.valor + 1;
+            temp = temp + 1;
+            goto Lsalida;
+        Lsalida:
+            HEAP[temp] = valExp;
+            temp = temp + 1;
+            HEAP[temp] = -1;
+        '''
         # ejecutando la expresión
-        val = self.expresion.ejecutar(console, scope);
+        val:RetornoExpresion = self.expresion.ejecutar(console, scope);
         # obtenemos el vector
-        vector:Simbolo = self.id.ejecutar(console, scope);
-        if (vector.esVector == None):
+        vector:RetornoExpresion = self.id.ejecutar(console, scope);
+        if (vector.atrArr == None):
             # ERROR. No es un vector
             _error = _Error(f'La variable {vector.id} no es un vector, no contiene la función push', scope.ambito, self.linea, self.columna, datetime.now());
             raise Exception(_error);
-        if (not vector.esVector):
-            # ERROR. Los arreglos no contiene la función push
-            _error = _Error(f'Los arreglos {vector.id} no contiene la función push', scope.ambito, self.linea, self.columna, datetime.now());
-            raise Exception(_error);
         if (vector.tipo == None):
             vector.tipo = val.tipo;
-        if (val.tipo != vector.tipo):
-            if (isinstance(vector.tipo, Dimension) and val.tipo != self.devolverTipo(vector.tipo.tipo)):
-                # ERROR. Tipos incompatibles
-                print(str(val.tipo) +"!="+ str(vector.tipo))
-                _error = _Error(f'Tipos incompatibles. No se puede almacenar una expresión {val.tipo.name} en una variable de tipo {vector.tipo.name}', scope.ambito, self.linea, self.columna, datetime.now());
-                raise Exception(_error);
+        elif (val.tipo != vector.tipo):
+            _error = _Error(f'Tipos incompatibles. No se puede almacenar una expresión {val.tipo.name} en una variable de tipo {vector.tipo.name}', scope.ambito, self.linea, self.columna, datetime.now());
+            raise Exception(_error);
+
+
         vector.valor.append(val.valor);
         # ahora revisaremos si se trata de un vector con un tamaño definido
         if (vector.with_capacity != None):
