@@ -37,7 +37,7 @@ class Arreglo(Expresion):
         retorno.atrArr = atrArr;
         return retorno;
 
-    def reservarEspacio(self, valor, agregado):
+    def reservarEspacio(self, valor, agregado:bool):
         if (isinstance(valor, list)):
             if (not agregado and len(valor) != 1):
                 self.dimensiones.append(len(valor));

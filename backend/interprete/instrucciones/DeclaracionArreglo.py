@@ -33,23 +33,23 @@ class DeclaracionArreglo(Instruccion):
         self.generador.addComentario('DECLARACION DE ARREGLO');
         self.valor.generador = self.generador;
         valor:RetornoExpresion = self.valor.ejecutar(console, scope);
-        if (self.dimension != None and not self.dimension.esVector):
-            atrArr = AtributosArreglo(False, None);
+        atrArr = AtributosArreglo(False, None);
+        print("self.dim:: " +str(self.dimension))
+        if (self.dimension != None):
             for dim in self.dimension.dimensiones:
                 atrArr.dimensiones.append(dim);
             atrArr.dimensiones.reverse();
             print(str(atrArr.dimensiones) + ' != ' + str(valor.atrArr.dimensiones))
-            if (atrArr.dimensiones != valor.atrArr.dimensiones):
+            if (not valor.atrArr.esVector and atrArr.dimensiones != valor.atrArr.dimensiones):
                 _error = _Error(f'Las dimensiones de la expresión no son iguales a las indicadas.', scope.ambito, self.linea, self.columna, datetime.now())
                 raise Exception(_error);
         if (valor.atrArr.esVector):
-            print("sisoiii");
-            print("dim:: " + str(valor.atrArr.dimensiones))
-            print("capacity:: " + str(valor.atrArr.with_capacity))
+            valor.atrArr.dimensiones = atrArr.dimensiones;
             pos:int = scope.crearVariable(valor.valor, self.id, 'Vector', valor.tipo, self.mut, valor.atrArr, self.linea, self.columna, console);
         else:
             pos:int = scope.crearVariable(valor.valor, self.id, 'Arreglo', valor.tipo, self.mut, valor.atrArr, self.linea, self.columna, console);
         self.generador.setStack(pos, valor.valor);
+        print("dimm:: DDD   " + str(valor.atrArr.dimensiones));
 
 class AsignacionArreglo(Instruccion):
     def __init__(self, id:str, indices:list, expresion:Expresion, linea: int, columna: int): 

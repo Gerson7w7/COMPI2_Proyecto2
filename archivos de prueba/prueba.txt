@@ -182,7 +182,7 @@ fn main(){
     vector[4] = 10;
     println!("vector => {:?}", vector);
 
-    let vector2 = vec![vec![vec![1,1,1],vec![2,2,2]],vec![2; 8],vec![3; 15],vec![5; 2],vec![8; 1]];
+    let vector2 = vec![vec![vec![1,1,1],vec![2,2,2]],vec![vec![3,3,3],vec![4,4,4]],vec![vec![5,5,5],vec![6,6,6]],vec![vec![7,7,7],vec![8,8,8]],vec![vec![9,9,9],vec![10,10,10]]];
     println!("vector2 => {:?}", vector2);
     vector2[3][0] = 10;
     vector2[0][1][1] = -5;

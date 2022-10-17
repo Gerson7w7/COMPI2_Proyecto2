@@ -77,32 +77,21 @@ class Vector(Expresion):
     def recorrerLista(self, valor, console:Console, scope:Scope):
         if (isinstance(valor, list)):
             for v in valor:
-                v.generador = self.generador;
-                val:RetornoExpresion = v.ejecutar(console, scope);
-                if (self.tipo == None):
-                    self.tipo = val.tipo;
-                elif(self.tipo != val.tipo):
-                    _error = _Error(f'Los arreglos tienen que ser de un solo tipo. Se obtuvo {self.tipo.name} y {val.tipo.name}', 'Vector', self.linea, self.columna, datetime.now());
-                    raise Exception(_error);
-                '''
-                HEAP[self.temp] = val.valor;
-                self.temp = self.temp + 1;
-                '''
-                self.generador.setHeap(self.temp, val.valor);
-                self.generador.addOperacion(self.temp, self.temp, '1', '+');
+                self.recorrerLista(v, console, scope);
         elif(isinstance(valor, dict)):
             for i in range(valor.get('cantidad')):
-                v = valor.get('expresion');
-                v.generador = self.generador;
-                val:RetornoExpresion = v.ejecutar(console, scope);
-                if (self.tipo == None):
-                    self.tipo = val.tipo;
-                elif(self.tipo != val.tipo):
-                    _error = _Error(f'Los arreglos tienen que ser de un solo tipo. Se obtuvo {self.tipo.name} y {val.tipo.name}', 'Vector', self.linea, self.columna, datetime.now());
-                    raise Exception(_error);
-                '''
-                HEAP[self.temp] = val.valor;
-                self.temp = self.temp + 1;
-                '''
-                self.generador.setHeap(self.temp, val.valor);
-                self.generador.addOperacion(self.temp, self.temp, '1', '+');
+                self.recorrerLista(valor.get('expresion'), console, scope);
+        else:
+            valor.generador = self.generador;
+            val:RetornoExpresion = valor.ejecutar(console, scope);
+            if (self.tipo == None):
+                self.tipo = val.tipo;
+            elif(self.tipo != val.tipo):
+                _error = _Error(f'Los arreglos tienen que ser de un solo tipo. Se obtuvo {self.tipo.name} y {val.tipo.name}', 'Arreglo', self.linea, self.columna, datetime.now());
+                raise Exception(_error);
+            '''
+            HEAP[self.temp] = val.valor;
+            self.temp = self.temp + 1;
+            '''
+            self.generador.setHeap(self.temp, val.valor);
+            self.generador.addOperacion(self.temp, self.temp, '1', '+');

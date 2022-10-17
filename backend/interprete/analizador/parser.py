@@ -257,7 +257,10 @@ def p_type_vector(p):
     """
     type_vector : VEC_OBJ MENOR declaracion_tipo MAYOR
     """
-    p[0] = Dimension(p[3], None, True);
+    if (p[3].):
+        p[3].dimensiones.append(1); p[0] = p[3];
+    else:
+        p[0] = Dimension(p[3], [1], True);
 
 def p_igualacion(p):
     """
