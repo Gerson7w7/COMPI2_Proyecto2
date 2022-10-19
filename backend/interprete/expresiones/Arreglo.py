@@ -23,8 +23,6 @@ class Arreglo(Expresion):
         '''
         self.generador.addComentario('ARREGLO');
         self.reservarEspacio(self.valor, False);
-        print("paso por aki")
-        print("soi arrelgo: " + str(self.dimensiones))
         self.temp = self.generador.newTemp();
         tempRetorno:str = self.generador.newTemp();
         self.generador.addOperacion(self.temp, 'HP', '', '');

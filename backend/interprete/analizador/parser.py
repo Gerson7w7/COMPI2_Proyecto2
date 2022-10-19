@@ -19,7 +19,7 @@ from ..instrucciones.Loop import Loop
 from ..expresiones.FuncionesNativas import Abs, Clone, Sqrt, ToString, Chars
 from ..instrucciones.While import While
 from ..expresiones.Casteo import Casteo
-from ..instrucciones.DeclaracionArreglo import DeclaracionArreglo, AsignacionArreglo, Dimension, WithCapacity
+from ..instrucciones.DeclaracionArreglo import DeclaracionArreglo, AsignacionArreglo, Dimension
 from ..expresiones.Arreglo import Arreglo
 from ..expresiones.Expresion import Expresion
 from interprete.instrucciones.FuncionesVector import Push, Insert, Remove, Contains, Longitud, Capacity
@@ -257,7 +257,7 @@ def p_type_vector(p):
     """
     type_vector : VEC_OBJ MENOR declaracion_tipo MAYOR
     """
-    if (p[3].):
+    if (isinstance(p[3], Dimension)):
         p[3].dimensiones.append(1); p[0] = p[3];
     else:
         p[0] = Dimension(p[3], [1], True);
@@ -454,7 +454,7 @@ def p_expresion_arreglo(p):
     elif (len(p) == 7):
         p[0] = Vector(None, None, p.lineno(1), p.lexpos(1));
     elif (len(p) == 8):
-        pass;
+        p[0] = Vector(None, p[6], p.lineno(1), p.lexpos(1));
 
 def p_indice_arreglo(p):
     """

@@ -177,14 +177,15 @@ fn main(){
     println!("EXPRESSION: {}", 2 as f64 as i64 as f64 as i64 - 5.0 as i64); 
 
     // ============ VECTOR ===============
-    let mut vector = vec![1,2,3,4,5];
+    let mut vector:Vec<int> = vec![1,2,3,4,5];
     println!("vector => {:?}", vector);
     vector[4] = 10;
     println!("vector => {:?}", vector);
 
-    let vector2 = vec![vec![vec![1,1,1],vec![2,2,2]],vec![vec![3,3,3],vec![4,4,4]],vec![vec![5,5,5],vec![6,6,6]],vec![vec![7,7,7],vec![8,8,8]],vec![vec![9,9,9],vec![10,10,10]]];
+    let vector2:Vec<Vec<Vec<int>>> = vec![vec![vec![1,1,1],vec![2,2,2]],vec![vec![3,3,3],vec![4,4,4]],vec![vec![5,5,5],vec![6,6,6]],vec![vec![7,7,7],vec![8,8,8]],vec![vec![9,9,9],vec![10,10,10]]];
     println!("vector2 => {:?}", vector2);
-    vector2[3][0] = 10;
+    println!("vector2 => {:?}", vector2[4]);
+    vector2[3][0][2] = 10;
     vector2[0][1][1] = -5;
     vector2[0][0] = vec![-30;3];
     println!("vector2 => {:?}", vector2);
@@ -201,7 +202,6 @@ fn main(){
     vector4.push("Siuu");
     println!("vector4 => {:?}", vector4);
     vector4.push("OOOAAA");
-
     println!("vector4 => {:?}", vector4);
     vector4.insert(0, "capacidad de 9");
     println!("vector4 => {:?}", vector4);
@@ -343,3 +343,127 @@ fn main(){
     println!("{}", c2.color);
     println!("{}", c2.tipo);
 }
+
+
+
+
+
+
+
+
+
+i = 0;
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);
+printf("%d",(int)HEAP[i]);
+i = i+1;
+printf("%c",10);

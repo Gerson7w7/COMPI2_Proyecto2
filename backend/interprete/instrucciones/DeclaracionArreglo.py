@@ -12,11 +12,6 @@ class Dimension:
         self.dimensiones = dimensiones;
         self.esVector = esVector;
 
-class WithCapacity:
-    def __init__(self, esVector:bool, capacidad:int):
-        self.esVector = esVector;
-        self.capacidad = capacidad;
-
 class DeclaracionArreglo(Instruccion):
     def __init__(self, mut:bool, id:str, dimension:Dimension, valor:Expresion, linea:int, columna:int):
         super().__init__(linea, columna);
@@ -34,12 +29,10 @@ class DeclaracionArreglo(Instruccion):
         self.valor.generador = self.generador;
         valor:RetornoExpresion = self.valor.ejecutar(console, scope);
         atrArr = AtributosArreglo(False, None);
-        print("self.dim:: " +str(self.dimension))
         if (self.dimension != None):
             for dim in self.dimension.dimensiones:
                 atrArr.dimensiones.append(dim);
             atrArr.dimensiones.reverse();
-            print(str(atrArr.dimensiones) + ' != ' + str(valor.atrArr.dimensiones))
             if (not valor.atrArr.esVector and atrArr.dimensiones != valor.atrArr.dimensiones):
                 _error = _Error(f'Las dimensiones de la expresión no son iguales a las indicadas.', scope.ambito, self.linea, self.columna, datetime.now())
                 raise Exception(_error);
@@ -49,7 +42,6 @@ class DeclaracionArreglo(Instruccion):
         else:
             pos:int = scope.crearVariable(valor.valor, self.id, 'Arreglo', valor.tipo, self.mut, valor.atrArr, self.linea, self.columna, console);
         self.generador.setStack(pos, valor.valor);
-        print("dimm:: DDD   " + str(valor.atrArr.dimensiones));
 
 class AsignacionArreglo(Instruccion):
     def __init__(self, id:str, indices:list, expresion:Expresion, linea: int, columna: int): 
@@ -62,6 +54,12 @@ class AsignacionArreglo(Instruccion):
         # aquí obtenemos el puntero hacia la primera posición del heap
         val:Simbolo = scope.getValor(self.id, self.linea, self.columna);
         # obtenemos el valor de la expresion
+        if (val.atrArr.esVector):
+            self.asignacionVector(val, console, scope);
+        else:
+            self.asignacionArreglo(val, console, scope);
+        
+    def asignacionArreglo(self, val:Simbolo, console:Console, scope):
         '''
         tIndice = 0;
         temp = STACK[val.posicion];
@@ -137,6 +135,42 @@ class AsignacionArreglo(Instruccion):
             self.generador.addEtq(Lsalida);
         else:
             self.generador.setHeap(tIndice, valExp.valor);
+        scope.setValor(self.id, val, self.linea, self.columna);
+
+    def asignacionVector(self, val:Simbolo, console:Console, scope):
+        # indices para obtener el valor deseado
+        '''
+        temp = STACK[val.posicion];
+        '''
+        self.generador.addComentario('ASIGNACIÓN A VECTOR');
+        _indices:list = [];
+        for i in self.indices:
+            i.generador = self.generador;
+            index = i.ejecutar(console, scope);
+            if(index.tipo != TipoDato.INT64):
+                # ERROR. No se puede acceder a la posicion val.valor
+                _error = _Error(f'No se puede acceder a la posición {index.valor}', scope.ambito, self.linea, self.columna, datetime.now())
+                raise Exception(_error);
+            _indices.append(index.valor);
+        temp:str = self.generador.newTemp();
+        tempPuntero:str = self.generador.newTemp();
+        self.generador.getStack(temp, val.posicion);
+        for i in _indices:
+            '''
+            tempPuntero = temp + indices[n];
+            temp = HEAP[tempPuntero];
+            '''
+            self.generador.addOperacion(tempPuntero, temp, i, '+');
+            self.generador.getHeap(temp, tempPuntero);
+        self.expresion.generador = self.generador;
+        valExp:RetornoExpresion = self.expresion.ejecutar(console, scope);
+        if (val.tipo != valExp.tipo):
+            _error = _Error(f'No se puede guardar una expresión de tipo {valExp.tipo.name} en un arreglo de tipo {val.tipo}', scope.ambito, self.linea, self.columna, datetime.now())
+            raise Exception(_error);
+        '''
+        HEAP[tempPuntero] = valExp.valor;
+        '''
+        self.generador.setHeap(tempPuntero, valExp.valor);
         scope.setValor(self.id, val, self.linea, self.columna);
 
     def dimTam(self, indice:int, dimensiones:list) -> int:

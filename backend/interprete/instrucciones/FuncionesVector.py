@@ -1,5 +1,4 @@
 from ..expresiones.Expresion import Expresion
-from .DeclaracionArreglo import Dimension
 from ..extra.Tipos import TipoDato
 from ..extra.Simbolo import Simbolo
 from .Instruccion import Instruccion
@@ -17,25 +16,30 @@ class Push(Instruccion):
     def ejecutar(self, console: Console, scope: Scope):
         '''
         <código de valExp>
-        <código de valId>
+        <código de vector>
         temp = HP;
         tempRetorno = HP;
-        HP = HP + espacioNuevo;
+        espacioNuevo = 2;
         Lloop:
-            if (valId.valor == -1) goto Lsalida
-            tempVal = HEAP[valId.valor];
+            tempVal = HEAP[vector.valor];
+            if (tempVal == -1) goto Lsalida
             HEAP[temp] = tempVal;
-            valId.valor = valId.valor + 1;
+            vector.valor = vector.valor + 1;
             temp = temp + 1;
-            goto Lsalida;
+            espacioNuevo = espacioNuevo + 1;
+            goto Lloop;
         Lsalida:
-            HEAP[temp] = valExp;
+            HP = HP + espacioNuevo;
+            HEAP[temp] = val.valor;
             temp = temp + 1;
             HEAP[temp] = -1;
+            STACK[pos] = tempRetorno;
         '''
         # ejecutando la expresión
+        self.expresion.generador = self.generador;
         val:RetornoExpresion = self.expresion.ejecutar(console, scope);
         # obtenemos el vector
+        self.id.generador = self.generador;
         vector:RetornoExpresion = self.id.ejecutar(console, scope);
         if (vector.atrArr == None):
             # ERROR. No es un vector
@@ -46,30 +50,37 @@ class Push(Instruccion):
         elif (val.tipo != vector.tipo):
             _error = _Error(f'Tipos incompatibles. No se puede almacenar una expresión {val.tipo.name} en una variable de tipo {vector.tipo.name}', scope.ambito, self.linea, self.columna, datetime.now());
             raise Exception(_error);
-
-
-        vector.valor.append(val.valor);
+        temp:str = self.generador.newTemp();
+        tempRetorno:str = self.generador.newTemp();
+        tempVal:str = self.generador.newTemp();
+        nuevoEspacio:str = self.generador.newTemp();
+        Lloop:str = self.generador.newEtq();
+        Lsalida:str = self.generador.newEtq();
+        self.generador.addOperacion(temp, 'HP', '', '');
+        self.generador.addOperacion(tempRetorno, 'HP', '', '');
+        self.generador.addOperacion(nuevoEspacio, '2', '', '');
+        self.generador.addEtq(Lloop);
+        self.generador.getHeap(tempVal, vector.valor);
+        self.generador.addIf(tempVal, '-1', '==', Lsalida);
+        self.generador.setHeap(temp, tempVal);
+        self.generador.addOperacion(vector.valor, vector.valor, '1', '+');
+        self.generador.addOperacion(temp, temp, '1', '+');
+        self.generador.addOperacion(nuevoEspacio, nuevoEspacio, '1', '+');
+        self.generador.addGoto(Lloop);
+        self.generador.addEtq(Lsalida);
+        self.generador.addOperacion('HP', 'HP', nuevoEspacio, '+');
+        self.generador.setHeap(temp, val.valor);
+        self.generador.addOperacion(temp, temp, '1', '+');
+        self.generador.setHeap(temp, '-1');
         # ahora revisaremos si se trata de un vector con un tamaño definido
-        if (vector.with_capacity != None):
-            if (vector.with_capacity < len(vector.valor) + 1):
-                vector.with_capacity = vector.with_capacity * 2;
-        scope.setValor(self.id.id, vector, self.linea, self.columna);
-
-    def devolverTipo(self, tipo:str):
-        if (tipo == 'i64' or tipo == 'usize'):
-            return TipoDato.INT64
-        elif (tipo == 'f64'):
-            return TipoDato.FLOAT64
-        elif (tipo == 'bool'):
-            return TipoDato.BOOLEAN
-        elif (tipo == 'char'):
-            return TipoDato.CHAR
-        elif (tipo == 'String'):
-            return TipoDato.STRING
-        elif (tipo == 'str'):
-            return TipoDato.STR
-        else:
-            return tipo;
+        vector.atrArr.size += 1;
+        print(str(vector.atrArr.with_capacity) + "<" + str(vector.atrArr.size))
+        if (vector.atrArr.with_capacity < vector.atrArr.size):
+            vector.atrArr.with_capacity = vector.atrArr.with_capacity * 2;
+            print("sisoi:: " + str(vector.atrArr.with_capacity))
+        vector.valor = RetornoExpresion(tempRetorno, vector.tipo, True);
+        pos:int = scope.setValor(self.id.id, vector, self.linea, self.columna);
+        self.generador.setStack(pos, tempRetorno);
 
 class Insert(Instruccion):
     def __init__(self, id:str, exp1, exp2, linea: int, columna: int):
@@ -191,22 +202,22 @@ class Longitud(Instruccion):
         return RetornoExpresion(len(vector.valor), TipoDato.INT64, None);
 
 class Capacity(Instruccion):
-    def __init__(self, id:str, linea: int, columna: int):
+    def __init__(self, id:Expresion, linea: int, columna: int):
         super().__init__(linea, columna);
         self.id = id;
 
     def ejecutar(self, console: Console, scope: Scope):
+        '''
+        temp = vector.with_capacity;
+        '''
         # obtenemos el vector
-        vector:Simbolo = self.id.ejecutar(console, scope);
-        if (vector.esVector == None):
+        self.id.generador = self.generador;
+        vector:RetornoExpresion = self.id.ejecutar(console, scope);
+        if (vector.atrArr.esVector == None):
             # ERROR. No es un vector
             _error = _Error(f'La variable {vector.id} no es un vector, no contiene la función capacity', scope.ambito, self.linea, self.columna, datetime.now());
             raise Exception(_error);
-        if (not vector.esVector):
-            # ERROR. Los arreglos no contiene la función capacity
-            _error = _Error(f'Los arreglos {vector.id} no contiene la función capacity', scope.ambito, self.linea, self.columna, datetime.now());
-            raise Exception(_error);
         # retornamos la capacidad de la lista
-        if (vector.with_capacity != None):
-            return RetornoExpresion(vector.with_capacity, TipoDato.INT64, None);
-        return RetornoExpresion(len(vector.valor) + 1, TipoDato.INT64, None);
+        temp:str = self.generador.newTemp();
+        self.generador.addOperacion(temp, vector.atrArr.with_capacity, '', '');
+        return RetornoExpresion(temp, TipoDato.INT64, False);

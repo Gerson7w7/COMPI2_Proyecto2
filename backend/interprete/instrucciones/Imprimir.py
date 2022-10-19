@@ -34,34 +34,10 @@ class Imprimir(Instruccion):
                 val:RetornoExpresion = exp.ejecutar(console, scope);
                 i += 1;
                 if (esExp and esArr):
-                    '''
-                    tempLim = val.valor + total;
-                    Lloop:
-                        if (val.valor == tempLim) goto Lsalida;
-                        temp = HEAP[val.valor];
-                        <código para imprimir>
-                        val.valor = val.valor + 1;
-                        goto Lloop;
-                    Lsalida:
-                    '''
-                    # arreglos
-                    self.generador.addComentario('IMPRIMIENDO ARREGLO');
-                    total:int = 1;
-                    for index in val.atrArr.dimensiones:
-                        total *= index;
-                    tempLim:str = self.generador.newTemp();
-                    Lloop:str = self.generador.newEtq();
-                    Lsalida:str = self.generador.newEtq();
-                    temp:str = self.generador.newTemp();
-                    self.generador.addOperacion(tempLim, val.valor, total, '+');
-                    self.generador.addEtq(Lloop);
-                    self.generador.addIf(val.valor, tempLim, '==', Lsalida);
-                    self.generador.getHeap(temp, val.valor);
-                    self.imprimirExpresion(RetornoExpresion(temp, val.tipo, True));
-                    self.generador.addPrintf('c', '(char)44'); # 44 = ,
-                    self.generador.addOperacion(val.valor, val.valor, '1', '+');
-                    self.generador.addGoto(Lloop);
-                    self.generador.addEtq(Lsalida);
+                    if (val.atrArr.esVector):
+                        self.imprimirVector(val, 1);
+                    else:
+                        self.imprimirArreglo(val);
                 else:
                     self.imprimirExpresion(val);
             else:
@@ -126,3 +102,63 @@ class Imprimir(Instruccion):
             self.generador.addOperacion(val.valor, val.valor, '1', '+');
             self.generador.addGoto(Lloop);
             self.generador.addEtq(Lsalida);
+
+    def imprimirArreglo(self, val:RetornoExpresion):
+        '''
+        tempLim = val.valor + total;
+        Lloop:
+            if (val.valor == tempLim) goto Lsalida;
+            temp = HEAP[val.valor];
+            <código para imprimir>
+            val.valor = val.valor + 1;
+            goto Lloop;
+        Lsalida:
+        '''
+        # arreglos
+        self.generador.addComentario('IMPRIMIENDO ARREGLO');
+        total:int = 1;
+        for index in val.atrArr.dimensiones:
+            total *= index;
+        tempLim:str = self.generador.newTemp();
+        Lloop:str = self.generador.newEtq();
+        Lsalida:str = self.generador.newEtq();
+        temp:str = self.generador.newTemp();
+        self.generador.addOperacion(tempLim, val.valor, total, '+');
+        self.generador.addEtq(Lloop);
+        self.generador.addIf(val.valor, tempLim, '==', Lsalida);
+        self.generador.getHeap(temp, val.valor);
+        self.imprimirExpresion(RetornoExpresion(temp, val.tipo, True));
+        self.generador.addPrintf('c', '(char)44'); # 44 = ,
+        self.generador.addOperacion(val.valor, val.valor, '1', '+');
+        self.generador.addGoto(Lloop);
+        self.generador.addEtq(Lsalida);
+
+    def imprimirVector(self, val:RetornoExpresion, i:int):
+        '''
+        Lloop:
+            temp = HEAP[val.valor];
+            if (temp == -1) goto Lsalida;
+            ...
+            <código para imprimir>
+            val.valor = val.valor + 1;
+            goto Lloop;
+        Lsalida:
+        '''
+        # arreglos
+        self.generador.addComentario('IMPRIMIENDO VECTOR');
+        Lloop:str = self.generador.newEtq();
+        Lsalida:str = self.generador.newEtq();
+        temp:str = self.generador.newTemp();
+        self.generador.addEtq(Lloop);
+        self.generador.getHeap(temp, val.valor);
+        self.generador.addIf(temp, '-1', '==', Lsalida);
+        if (i != len(val.atrArr.dimensiones)):
+            retorno = RetornoExpresion(temp, val.tipo, True);
+            retorno.atrArr = val.atrArr;
+            self.imprimirVector(retorno, i + 1);
+        else:
+            self.imprimirExpresion(RetornoExpresion(temp, val.tipo, True));
+            self.generador.addPrintf('c', '(char)44'); # 44 = ,
+        self.generador.addOperacion(val.valor, val.valor, '1', '+');
+        self.generador.addGoto(Lloop);
+        self.generador.addEtq(Lsalida);

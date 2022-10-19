@@ -61,7 +61,7 @@ class Scope:
         while(scope != None):
             if (scope.variables.get(id) != None):
                 val:Simbolo = scope.variables.get(id);
-                if (val.tipo == valor.tipo):
+                if (val.tipo == None or val.tipo == valor.tipo):
                     if (val.mut):
                         scope.variables.update({id : Simbolo(valor.valor, id, valor.tipo, True, val.atrArr, val.posicion)});
                         return val.posicion;

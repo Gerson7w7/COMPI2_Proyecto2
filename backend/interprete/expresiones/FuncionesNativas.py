@@ -115,5 +115,4 @@ class Chars(Expresion):
             raise Exception(_error);
         # cambiamos el tipo de la expresión
         val.tipo = TipoDato.CHAR;
-        print("ola ma" + str(val.atrArr))
         return val;

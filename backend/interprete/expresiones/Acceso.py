@@ -46,6 +46,12 @@ class AccesoArreglo(Expresion):
     def ejecutar(self, console: Console, scope: Scope):
         # aquí obtenemos el puntero hacia la primera posición del heap
         val:Simbolo = scope.getValor(self.id, self.linea, self.columna);
+        if (val.atrArr.esVector):
+            return self.accesoVector(val, console, scope);
+        else:
+            return self.accesoArreglo(val, console, scope);
+        
+    def accesoArreglo(self, val:Simbolo, console:Console, scope:Scope):
         # indices para obtener el valor deseado
         '''
         tIndice = 0;
@@ -97,6 +103,39 @@ class AccesoArreglo(Expresion):
         else:
             self.generador.getHeap(tempRetorno, tIndice);
             return RetornoExpresion(tempRetorno, val.tipo, True);
+
+    def accesoVector(self, val:Simbolo, console:Console, scope:Scope):
+        # indices para obtener el valor deseado
+        '''
+        temp = STACK[val.posicion];
+        '''
+        self.generador.addComentario('ACCESO A ARREGLO');
+        _indices:list = [];
+        for i in self.indices:
+            i.generador = self.generador;
+            index = i.ejecutar(console, scope);
+            if(index.tipo != TipoDato.INT64):
+                # ERROR. No se puede acceder a la posicion val.valor
+                _error = _Error(f'No se puede acceder a la posición {index.valor}', scope.ambito, self.linea, self.columna, datetime.now())
+                raise Exception(_error);
+            _indices.append(index.valor);
+        temp:str = self.generador.newTemp();
+        self.generador.getStack(temp, val.posicion);
+        for i in _indices:
+            '''
+            temp = temp + indices[n];
+            temp = HEAP[temp];
+            '''
+            self.generador.addOperacion(temp, temp, i, '+');
+            self.generador.getHeap(temp, temp);
+        atrArr = AtributosArreglo(True, None);
+        if (len(_indices) < len(val.atrArr.dimensiones)):
+            atrArr.dimensiones = val.atrArr.dimensiones[len(_indices):];
+            retorno = RetornoExpresion(temp, val.tipo, True);
+            retorno.atrArr = atrArr;
+            return retorno;
+        else:
+            return RetornoExpresion(temp, val.tipo, True);
 
     def dimTam(self, indice:int, dimensiones:list) -> int:
         total:int = 1;

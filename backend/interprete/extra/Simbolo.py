@@ -4,6 +4,7 @@ class AtributosArreglo:
     def __init__(self, esVector:bool, with_capacity:int) -> None:
         self.esVector = esVector;
         self.with_capacity = with_capacity;
+        self.size = 0;
         self.dimensiones = [];
 
 class Simbolo:

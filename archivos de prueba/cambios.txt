@@ -19,7 +19,13 @@ Declaración: listo
 Asignación: listo
 ForIn: listo
 Funcion: ::::PENDIENTE::::
-FuncionesVector: ::::PENDIENTE::::
+FuncionesVector: 
+    Push: listo
+    Insert: ::::PENDIENTE::::
+    Remove: ::::PENDIENTE::::
+    Contanis: ::::PENDIENTE::::
+    Longitud: ::::PENDIENTE::::
+    Capacity: listo
 IfElse: listo
 Imprimir: listo
 Instruccion: listo

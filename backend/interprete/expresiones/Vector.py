@@ -30,7 +30,7 @@ class Vector(Expresion):
             self.generador.setHeap(self.temp, '-1');
             retorno = RetornoExpresion(self.temp, self.tipo, True);
             atrArr = AtributosArreglo(True, 1);
-            atrArr.dimensiones = [0];
+            atrArr.size = 0;
             retorno.atrArr = atrArr;
         elif(self.valor != None):
             # vec![exp, exp, exp];
@@ -45,12 +45,12 @@ class Vector(Expresion):
             tempRetorno:str = self.generador.newTemp();
             self.generador.addOperacion(self.temp, 'HP', '', '');
             self.generador.addOperacion(tempRetorno, self.temp, '', '');
-            self.generador.addOperacion('HP', 'HP', len(self.valor), '+');
+            self.generador.addOperacion('HP', 'HP', len(self.valor) + 1, '+');
             self.recorrerLista(self.valor, console, scope);
             self.generador.setHeap(self.temp, '-1');
             retorno = RetornoExpresion(tempRetorno, self.tipo, True);
             atrArr = AtributosArreglo(True, len(self.valor) + 1);
-            atrArr.dimensiones = [len(self.valor)];
+            atrArr.size = len(self.valor);
             retorno.atrArr = atrArr;
         elif(self.with_capacity != None):
             # Vec::with_capacity(3);
@@ -62,6 +62,7 @@ class Vector(Expresion):
             '''
             self.temp = self.generador.newTemp();
             self.generador.addOperacion(self.temp, 'HP', '', '');
+            self.with_capacity.generador = self.generador;
             valCapacity:RetornoExpresion = self.with_capacity.ejecutar(console, scope);
             if (valCapacity.tipo != TipoDato.INT64):
                 _error = _Error(f'La capacidad de un vector tiene que ser de tipo INT64', 'Vector', self.linea, self.columna, datetime.now());
@@ -69,8 +70,8 @@ class Vector(Expresion):
             self.generador.addOperacion('HP', 'HP', valCapacity.valor, '+');
             self.generador.setHeap(self.temp, '-1');
             retorno = RetornoExpresion(self.temp, self.tipo, True);
-            atrArr = AtributosArreglo(True, valCapacity.valor);
-            atrArr.dimensiones = [0];
+            atrArr = AtributosArreglo(True, int(valCapacity.valor));
+            atrArr.size = 0;
             retorno.atrArr = atrArr;
         return retorno;
 
