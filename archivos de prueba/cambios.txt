@@ -21,7 +21,7 @@ ForIn: listo
 Funcion: ::::PENDIENTE::::
 FuncionesVector: 
     Push: listo
-    Insert: ::::PENDIENTE::::
+    Insert: listo
     Remove: ::::PENDIENTE::::
     Contanis: ::::PENDIENTE::::
     Longitud: ::::PENDIENTE::::
