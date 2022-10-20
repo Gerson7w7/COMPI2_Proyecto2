@@ -53,6 +53,9 @@ class Literal(Expresion):
                 return retorno;
             self.generador.addGoto(retorno.falseEtq);
             return retorno;
+        elif (self.tipo == TipoDato.CHAR):
+            self.generador.addComentario('LITERAL (char)');
+            return RetornoExpresion(ord(self.valor), self.tipo, False);
         else:
-            self.generador.addComentario('LITERAL (int, float o char)');
+            self.generador.addComentario('LITERAL (int o float)');
             return RetornoExpresion(str(self.valor), self.tipo, False);

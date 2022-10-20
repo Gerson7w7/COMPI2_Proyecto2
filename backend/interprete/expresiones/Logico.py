@@ -17,7 +17,6 @@ class Logico(Expresion):
         # ejecutando los valores
         self.izquierda.generador = self.generador;
         val1:RetornoExpresion = self.izquierda.ejecutar(console, scope);
-        print(val1.valor + " -- " + val1.trueEtq + " -- " + val1.falseEtq)
         # verificando si se trata de NOT
         if (self.derecha != None):
             if (val1.tipo != TipoDato.BOOLEAN):
@@ -38,8 +37,11 @@ class Logico(Expresion):
                     _error = _Error(f'Solo se puede comparar a nivel lógico tipos booleanos', scope.ambito, self.linea, self.columna, datetime.now());
                     raise Exception(_error);
                 retorno = RetornoExpresion('', TipoDato.BOOLEAN, True);
-                retorno.trueEtq += f'{val1.trueEtq}:\n{val2.trueEtq}:\n';
+                retorno.trueEtq = val1.trueEtq + val2.trueEtq;
                 retorno.falseEtq = val2.falseEtq;
+                print("orrrrrr:: ")
+                print("true:: " + str(retorno.trueEtq))
+                print("false:: " + str(retorno.falseEtq))
                 return retorno;
             # AND
             else:
@@ -56,7 +58,10 @@ class Logico(Expresion):
                     raise Exception(_error);
                 retorno = RetornoExpresion('', TipoDato.BOOLEAN, None);
                 retorno.trueEtq = val2.trueEtq;
-                retorno.falseEtq += f'{val1.falseEtq}:\n{val2.falseEtq}:\n';
+                retorno.falseEtq = val1.falseEtq + val2.falseEtq;
+                print("andddd:: ")
+                print("true:: " + str(retorno.trueEtq))
+                print("false:: " + str(retorno.falseEtq))
                 return retorno;
         else:
             # NOT

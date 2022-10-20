@@ -6,6 +6,6 @@ class RetornoExpresion:
         self.valor = valor;
         self.tipo = tipo;
         self.esTemp = esTemp;
-        self.trueEtq = '';
-        self.falseEtq = '';
+        self.trueEtq = [];
+        self.falseEtq = [];
         self.atrArr:AtributosArreglo = None;

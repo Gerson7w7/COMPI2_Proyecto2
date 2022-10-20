@@ -22,8 +22,8 @@ Funcion: ::::PENDIENTE::::
 FuncionesVector: 
     Push: listo
     Insert: listo
-    Remove: ::::PENDIENTE::::
-    Contanis: ::::PENDIENTE::::
+    Remove: listo
+    Contanis: listo
     Longitud: ::::PENDIENTE::::
     Capacity: listo
 IfElse: listo

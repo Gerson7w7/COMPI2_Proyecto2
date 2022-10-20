@@ -46,6 +46,9 @@ class IfElse(Instruccion):
             self.bloqueElse.temp = self.temp;
             esIfElse = True;
         self.generador.addComentario('IF-ELSE');
+        print("ifelse:: ")
+        print("true:: " + str(valCondicion.trueEtq))
+        print("false:: " + str(valCondicion.falseEtq))
         self.generador.addEtq(valCondicion.trueEtq);
         self.bloque.generador = self.generador;
         valIf:RetornoExpresion = self.bloque.ejecutar(console, scope, 'If');

@@ -2,8 +2,9 @@ from ..expresiones.Expresion import Expresion
 from ..extra.Retorno import RetornoExpresion
 from ..extra.Tipos import TipoDato
 from .Instruccion import Instruccion
-from ..extra.Console import Console
+from ..extra.Console import Console, _Error
 from ..extra.Scope import Scope
+from datetime import datetime
 
 class Imprimir(Instruccion):
     def __init__(self, saltoLinea:bool, cadena:str, expresiones:list, linea: int, columna: int):
@@ -29,17 +30,23 @@ class Imprimir(Instruccion):
                     self.generador.addPrintf('c', f'(char){str(ord(c))}');
             elif (c == '}'): 
                 # expresiones
+                print("exp:: " + str(self.expresiones[i]))
                 exp:Expresion = self.expresiones[i];
                 exp.generador = self.generador
                 val:RetornoExpresion = exp.ejecutar(console, scope);
                 i += 1;
                 if (esExp and esArr):
+                    if (val.atrArr == None):
+                        _error = _Error(f'Se esperaba imprimir un arreglo/vector, pero se obtuvo una expresión', scope.ambito, self.linea, self.columna, datetime.now());
+                        raise Exception(_error);
                     if (val.atrArr.esVector):
                         self.imprimirVector(val, 1);
                     else:
                         self.imprimirArreglo(val);
                 else:
                     self.imprimirExpresion(val);
+                esExp = False;
+                esArr = False;
             else:
                 self.generador.addPrintf('c', f'(char){str(ord(c))}');
         # si es println

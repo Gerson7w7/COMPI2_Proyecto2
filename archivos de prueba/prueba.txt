@@ -206,11 +206,11 @@ fn main(){
     vector4.insert(0, "capacidad de 9");
     println!("vector4 => {:?}", vector4);
     
-    vector4.insert(3, "F");
+    vector4.insert(2, "F");
     println!("vector4 => {:?}", vector4);
 
-    let _remove = vector4.remove(3);
-    println!("se eliminó el elemento: {}, que se encontraba en la posición: {}, ahora el vector quedó así: {:?}", _remove, 3, vector4);
+    let _remove = vector4.remove(0);
+    println!("se eliminó el elemento: {}, que se encontraba en la posición: {}, ahora el vector quedó así: {:?}", _remove, 0, vector4);
 
     println!("contiene Ola: {}", vector4.contains(&"Ola"));
     println!("contiene F: {}", vector4.contains(&"F"));

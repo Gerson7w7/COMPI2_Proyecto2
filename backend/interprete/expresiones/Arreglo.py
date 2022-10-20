@@ -32,6 +32,7 @@ class Arreglo(Expresion):
         retorno = RetornoExpresion(tempRetorno, self.tipo, True);
         atrArr = AtributosArreglo(False, None);
         atrArr.dimensiones = self.dimensiones;
+        atrArr.size = int(self.dimensiones[0]);
         retorno.atrArr = atrArr;
         return retorno;
 

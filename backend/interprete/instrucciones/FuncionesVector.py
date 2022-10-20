@@ -1,4 +1,3 @@
-from msilib.schema import SelfReg
 from ..expresiones.Expresion import Expresion
 from ..extra.Tipos import TipoDato
 from ..extra.Simbolo import Simbolo
@@ -76,10 +75,8 @@ class Push(Instruccion):
         self.generador.setHeap(temp, '-1');
         # ahora revisaremos si se trata de un vector con un tamaño definido
         vector.atrArr.size += 1;
-        print(str(vector.atrArr.with_capacity) + "<" + str(vector.atrArr.size))
         if (vector.atrArr.with_capacity < vector.atrArr.size):
             vector.atrArr.with_capacity = vector.atrArr.with_capacity * 2;
-            print("sisoi:: " + str(vector.atrArr.with_capacity))
         vector.valor = RetornoExpresion(tempRetorno, vector.tipo, True);
         pos:int = scope.setValor(self.id.id, vector, self.linea, self.columna);
         self.generador.setStack(pos, tempRetorno);
@@ -108,7 +105,7 @@ class Insert(Instruccion):
         # obtenemos el vector
         self.id.generador = self.generador;
         vector:Simbolo = self.id.ejecutar(console, scope);
-        if (vector.atrArr.esVector == None):
+        if (vector.atrArr == None):
             # ERROR. No es un vector
             _error = _Error(f'La variable {vector.id} no es un vector, no contiene la función Insert', scope.ambito, self.linea, self.columna, datetime.now());
             raise Exception(_error);
@@ -137,82 +134,155 @@ class Remove(Instruccion):
         <código de vector>
         tempPos = vector.valor + valPos.valor;
         tempDelete = HEAP[tempPos];
+        Lloop:
+            tempPosNext = tempPos + 1;
+            temp = HEAP[tempPosNext];
+            if(temp == -1) goto Lsalida;
+            HEAP[tempPos] = temp;
+            tempPos = tempPos + 1;
+            goto Lloop;
+        Lsalida:
+            HEAP[tempPos] = -1;
         '''
+        self.generador.addComentario('REMOVE');
         # indice del elemento a eliminar
-        val = self.exp.ejecutar(console, scope);
+        self.exp.generador = self.generador;
+        valPos:RetornoExpresion = self.exp.ejecutar(console, scope);
         # obtenemos el vector
-        vector:Simbolo = self.id.ejecutar(console, scope);
-        if (vector.esVector == None):
+        self.id.generador = self.generador;
+        vector:RetornoExpresion = self.id.ejecutar(console, scope);
+        if (vector.atrArr == None):
             # ERROR. No es un vector
             _error = _Error(f'La variable {vector.id} no es un vector, no contiene la función remove', scope.ambito, self.linea, self.columna, datetime.now());
             raise Exception(_error);
-        if (not vector.esVector):
-            # ERROR. Los arreglos no contiene la función remove
-            _error = _Error(f'Los arreglos {vector.id} no contiene la función remove', scope.ambito, self.linea, self.columna, datetime.now());
-            raise Exception(_error);
-        if (val.tipo != TipoDato.INT64):
+        if (valPos.tipo != TipoDato.INT64):
             # ERROR. Tipos incompatibles
-            _error = _Error(f'Se esperaba una posición de tipo i64 pero se obtuvo un tipo {val.tipo.name}', scope.ambito, self.linea, self.columna, datetime.now());
+            _error = _Error(f'Se esperaba una posición de tipo i64 pero se obtuvo un tipo {valPos.tipo.name}', scope.ambito, self.linea, self.columna, datetime.now());
             raise Exception(_error);
-        # primero obtenemos el elemento que se va a eliminar
-        valorRetorno = vector.valor[val.valor];
-        # ahora eliminamos el elemento
-        vector.valor.remove(valorRetorno);
-        # revisaremos si se trata de un vector con un tamaño definido
-        if (vector.with_capacity != None):
-            if (vector.with_capacity < len(vector.valor)):
-                vector.with_capacity = vector.with_capacity * 2;
+        tempPos:str = self.generador.newTemp();
+        tempDelete:str = self.generador.newTemp(); # esta etiqueta es la que hay que retornar
+        tempPosNext:str = self.generador.newTemp();
+        temp:str = self.generador.newTemp();
+        Lloop:str = self.generador.newEtq();
+        Lsalida:str = self.generador.newEtq();
+        self.generador.addOperacion(tempPos, vector.valor, valPos.valor, '+');
+        self.generador.getHeap(tempDelete, tempPos);
+        self.generador.addEtq(Lloop);
+        self.generador.addOperacion(tempPosNext, tempPos, '1', '+');
+        self.generador.getHeap(temp, tempPosNext);
+        self.generador.addIf(temp, '-1', '==', Lsalida);
+        self.generador.setHeap(tempPos, temp);
+        self.generador.addOperacion(tempPos, tempPos, '1', '+');
+        self.generador.addGoto(Lloop);
+        self.generador.addEtq(Lsalida);
+        self.generador.setHeap(tempPos, '-1');
+        vector.atrArr.size -= 1;
         scope.setValor(self.id.id, vector, self.linea, self.columna);
-        return RetornoExpresion(valorRetorno, vector.tipo, None);
+        return RetornoExpresion(tempDelete, vector.tipo, True);
 
 class Contains(Instruccion):
-    def __init__(self, id:str, exp, linea: int, columna: int):
+    def __init__(self, id:Expresion, exp:Expresion, linea: int, columna: int):
         super().__init__(linea, columna);
         self.id = id;
         self.exp = exp;
     
     def ejecutar(self, console: Console, scope: Scope):
+        '''
+        <código de valExp>
+        <código de vector>
+        Lloop:
+            temp = HEAP[vector.valor];
+            if(temp == -1) goto Lfalse;
+            if(temp == valExp.valor) goto Ltrue;
+            vector.valor = vector.valor + 1;
+            goto Lloop;
+        '''
+        self.generador.addComentario('CONTAINS');
         # expresion del elemento a buscar
-        val = self.exp.ejecutar(console, scope);
+        self.exp.generador = self.generador;
+        valExp:RetornoExpresion = self.exp.ejecutar(console, scope);
         # obtenemos el vector
-        vector:Simbolo = self.id.ejecutar(console, scope);
-        if (vector.esVector == None):
+        self.id.generador = self.generador;
+        vector:RetornoExpresion = self.id.ejecutar(console, scope);
+        if (vector.atrArr == None):
             # ERROR. No es un vector
             _error = _Error(f'La variable {vector.id} no es un vector, no contiene la función contains', scope.ambito, self.linea, self.columna, datetime.now());
             raise Exception(_error);
-        if (not vector.esVector):
-            # ERROR. Los arreglos no contiene la función contains
-            _error = _Error(f'Los arreglos {vector.id} no contiene la función contains', scope.ambito, self.linea, self.columna, datetime.now());
-            raise Exception(_error);
-        if (val.tipo != vector.tipo):
+        if (valExp.tipo != vector.tipo):
             # ERROR. Tipos incompatibles
-            _error = _Error(f'Tipos incompatibles. No se puede almacenar una expresión {val.tipo.name} en una variable de tipo {vector.tipo.name}', scope.ambito, self.linea, self.columna, datetime.now());
+            _error = _Error(f'Tipos incompatibles. No se puede almacenar una expresión {valExp.tipo.name} en una variable de tipo {vector.tipo.name}', scope.ambito, self.linea, self.columna, datetime.now());
             raise Exception(_error);
         # revisamos si existe el elemento en la lista
-        if (val.valor in vector.valor):
-            return RetornoExpresion(True, TipoDato.BOOLEAN, None);
-        return RetornoExpresion(False, TipoDato.BOOLEAN, None);
+        Lloop:str = self.generador.newEtq();
+        Ltrue:str = self.generador.newEtq();
+        Lfalse:str = self.generador.newEtq();
+        temp:str = self.generador.newTemp();
+        self.generador.addEtq(Lloop);
+        self.generador.getHeap(temp, vector.valor);
+        self.generador.addIf(temp, '-1', '==', Lfalse);
+        if(vector.tipo == TipoDato.STR or vector.tipo == TipoDato.STRING):
+            '''
+            tempPos = temp;
+            Lloop2:
+                tempVal = HEAP[tempPos];
+                tempComparacion = HEAP[valExp.valor];
+                if(tempVal == -1) goto Ltrue2;
+                if(tempVal != tempComparacion) goto Lnext;
+                tempPos = tempPos + 1;
+                valExp.valor = valExp.valor + 1;
+                goto Lloop2;
+            Ltrue2:
+                if(tempComparacion == -1) goto Ltrue;
+                goto Lnext;
+            Lnext:
+            '''
+            tempPos:str = self.generador.newTemp();
+            tempVal:str = self.generador.newTemp();
+            tempComparacion:str = self.generador.newTemp();
+            Lloop2:str = self.generador.newEtq();
+            Ltrue2:str = self.generador.newEtq();
+            Lnext:str = self.generador.newEtq();
+            self.generador.addOperacion(tempPos, temp, '', '');
+            self.generador.addEtq(Lloop2);
+            self.generador.getHeap(tempVal, tempPos);
+            self.generador.getHeap(tempComparacion, valExp.valor);
+            self.generador.addIf(tempVal, '-1', '==', Ltrue2);
+            self.generador.addIf(tempVal, tempComparacion, '!=', Lnext);
+            self.generador.addOperacion(tempPos, tempPos, '1', '+');
+            self.generador.addOperacion(valExp.valor, valExp.valor, '1', '+');
+            self.generador.addGoto(Lloop2);
+            self.generador.addEtq(Ltrue2);
+            self.generador.addIf(tempComparacion, '-1', '==', Ltrue);
+            self.generador.addGoto(Lnext);
+            self.generador.addEtq(Lnext);
+        else:
+            self.generador.addIf(temp, valExp.valor, '==', Ltrue);
+        self.generador.addOperacion(vector.valor, vector.valor, '1', '+');
+        self.generador.addGoto(Lloop);
+        retorno = RetornoExpresion('', TipoDato.BOOLEAN, False);
+        retorno.trueEtq = Ltrue;
+        retorno.falseEtq = Lfalse;
+        return retorno;
 
 class Longitud(Instruccion):
-    def __init__(self, id:str, linea: int, columna: int):
+    def __init__(self, id:Expresion, linea: int, columna: int):
         super().__init__(linea, columna);
         self.id = id;
 
     def ejecutar(self, console: Console, scope: Scope):
+        '''
+        <código de vector>
+        '''
+        self.generador.addComentario('LEN');
         # obtenemos el vector
-        vector:Simbolo = self.id.ejecutar(console, scope);
-        if (isinstance(vector, RetornoExpresion)):
-            # ERROR. No es un vector
-            _error = _Error(f'La expresión no es un vector, no contiene la función len', scope.ambito, self.linea, self.columna, datetime.now());
-            raise Exception(_error);
-        if (vector.esVector == None):
+        self.id.generador = self.generador;
+        vector:RetornoExpresion = self.id.ejecutar(console, scope);
+        if (vector.atrArr == None):
             # ERROR. No es un vector
             _error = _Error(f'La variable {vector.id} no es un vector, no contiene la función len', scope.ambito, self.linea, self.columna, datetime.now());
-            print(_error.descripcion)
-            print("vall:: " + str(vector.valor))
             raise Exception(_error);
         # retornamos la longitud de la lista
-        return RetornoExpresion(len(vector.valor), TipoDato.INT64, None);
+        return RetornoExpresion(vector.atrArr.size, TipoDato.INT64, False);
 
 class Capacity(Instruccion):
     def __init__(self, id:Expresion, linea: int, columna: int):
