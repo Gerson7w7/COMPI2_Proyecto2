@@ -17,6 +17,7 @@ class IfElse(Instruccion):
 
     def ejecutar(self, console: Console, scope: Scope):
         # obtenemos el valor de la condición
+        self.generador.addComentario('IF-ELSE');
         self.condicion.generador = self.generador;
         valCondicion:RetornoExpresion = self.condicion.ejecutar(console, scope);
         # sino es un boolean la condición, entonces es un error
@@ -31,7 +32,7 @@ class IfElse(Instruccion):
             goto Lsalida;
         valCondicion.falseEtq:
             <bloque de código>
-            goto Lsalida;
+        goto Lsalida:
         '''
         generarSalida:bool = False;
         esIfElse:bool = False;
@@ -45,10 +46,6 @@ class IfElse(Instruccion):
             self.bloqueElse.Lsalida = self.Lsalida;
             self.bloqueElse.temp = self.temp;
             esIfElse = True;
-        self.generador.addComentario('IF-ELSE');
-        print("ifelse:: ")
-        print("true:: " + str(valCondicion.trueEtq))
-        print("false:: " + str(valCondicion.falseEtq))
         self.generador.addEtq(valCondicion.trueEtq);
         self.bloque.generador = self.generador;
         valIf:RetornoExpresion = self.bloque.ejecutar(console, scope, 'If');

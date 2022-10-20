@@ -45,13 +45,13 @@ class Literal(Expresion):
             '''
             # creamos la etiqueta para true o false
             retorno = RetornoExpresion(self.valor, TipoDato.BOOLEAN, False);
-            retorno.trueEtq = self.generador.newEtq();
-            retorno.falseEtq = self.generador.newEtq();
+            retorno.trueEtq = [self.generador.newEtq()];
+            retorno.falseEtq = [self.generador.newEtq()];
             self.generador.addComentario('LITERAL (bool)');
             if(self.valor == '1'):
-                self.generador.addGoto(retorno.trueEtq);
+                self.generador.addGoto(retorno.trueEtq[0]);
                 return retorno;
-            self.generador.addGoto(retorno.falseEtq);
+            self.generador.addGoto(retorno.falseEtq[0]);
             return retorno;
         elif (self.tipo == TipoDato.CHAR):
             self.generador.addComentario('LITERAL (char)');

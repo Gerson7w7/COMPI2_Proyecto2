@@ -28,10 +28,10 @@ class Acceso(Expresion):
             if (retorno.valor == 1) goto trueEtq;
             goto falseEtq;
             '''
-            retorno.trueEtq = self.generador.newEtq();
-            retorno.falseEtq = self.generador.newEtq();
-            self.generador.addIf(retorno.valor, '1', '==', retorno.trueEtq);
-            self.generador.addGoto(retorno.falseEtq);
+            retorno.trueEtq = [self.generador.newEtq()];
+            retorno.falseEtq = [self.generador.newEtq()];
+            self.generador.addIf(retorno.valor, '1', '==', retorno.trueEtq[0]);
+            self.generador.addGoto(retorno.falseEtq[0]);
             return retorno;
         if (valor.atrArr != None):
             retorno.atrArr = valor.atrArr;

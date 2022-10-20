@@ -39,9 +39,6 @@ class Logico(Expresion):
                 retorno = RetornoExpresion('', TipoDato.BOOLEAN, True);
                 retorno.trueEtq = val1.trueEtq + val2.trueEtq;
                 retorno.falseEtq = val2.falseEtq;
-                print("orrrrrr:: ")
-                print("true:: " + str(retorno.trueEtq))
-                print("false:: " + str(retorno.falseEtq))
                 return retorno;
             # AND
             else:
@@ -59,9 +56,6 @@ class Logico(Expresion):
                 retorno = RetornoExpresion('', TipoDato.BOOLEAN, None);
                 retorno.trueEtq = val2.trueEtq;
                 retorno.falseEtq = val1.falseEtq + val2.falseEtq;
-                print("andddd:: ")
-                print("true:: " + str(retorno.trueEtq))
-                print("false:: " + str(retorno.falseEtq))
                 return retorno;
         else:
             # NOT

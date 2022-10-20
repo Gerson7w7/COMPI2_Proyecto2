@@ -27,10 +27,10 @@ class Casteo(Expresion):
             goto Lfalse;
             '''
             val.tipo = TipoDato.BOOLEAN;
-            val.trueEtq:str = self.generador.newEtq();
-            val.falseEtq:str = self.generador.newEtq();
-            self.generador.addIf(val.valor, '1', '==', val.trueEtq);
-            self.generador.addGoto(val.falseEtq);
+            val.trueEtq:str = [self.generador.newEtq()];
+            val.falseEtq:str = [self.generador.newEtq()];
+            self.generador.addIf(val.valor, '1', '==', val.trueEtq[0]);
+            self.generador.addGoto(val.falseEtq[0]);
             return val;
         elif (self.tipo == TipoDato.CHAR):
             val.tipo = TipoDato.CHAR;

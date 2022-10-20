@@ -14,22 +14,24 @@ class Abs(Expresion):
 
     def ejecutar(self, console: Console, scope: Scope):
         self.expresion.generador = self.generador;
-        val = self.expresion.ejecutar(console, scope);
+        val:RetornoExpresion = self.expresion.ejecutar(console, scope);
         # verificamos que sea un tipo de dato numérico
         if (val.tipo == TipoDato.INT64 or val.tipo == TipoDato.FLOAT64):
             '''
-            if (val.valor >= 0) goto Lsalida;
+            temp = val.valor;
+            if (temp >= 0) goto Lsalida;
             Lnegativo:
-                temp = val.valor * -1;
+                temp = temp * -1;
             Lsalida:
             '''
             Lsalida:str = self.generador.newEtq();
             Lnegativo:str = self.generador.newEtq();
             temp:str = self.generador.newTemp();
             self.generador.addComentario('ABS');
-            self.generador.addIf(val.valor, '0', '>=', Lsalida);
+            self.generador.addOperacion(temp, val.valor, '', '');
+            self.generador.addIf(temp, '0', '>=', Lsalida);
             self.generador.addEtq(Lnegativo);
-            self.generador.addOperacion(temp, val.valor, '-1', '*');
+            self.generador.addOperacion(temp, temp, '-1', '*');
             self.generador.addEtq(Lsalida);
             return RetornoExpresion(temp, val.tipo, True);
         # error, solo se aceptan datos numéricos

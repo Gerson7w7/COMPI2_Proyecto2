@@ -46,8 +46,8 @@ class Relacional(Expresion):
             self.generador.addIf(val1, val2, '==', Ltrue);
             self.generador.addGoto(Lfalse);
             retorno = RetornoExpresion('', TipoDato.BOOLEAN, False);
-            retorno.trueEtq = Ltrue;
-            retorno.falseEtq = Lfalse;
+            retorno.trueEtq = [Ltrue];
+            retorno.falseEtq = [Lfalse];
             return retorno;
         elif (self.tipo == TipoRelacional.DESIGUALDAD):
             '''
@@ -58,8 +58,8 @@ class Relacional(Expresion):
             self.generador.addIf(val1, val2, '!=', Ltrue);
             self.generador.addGoto(Lfalse);
             retorno = RetornoExpresion('', TipoDato.BOOLEAN, False);
-            retorno.trueEtq = Ltrue;
-            retorno.falseEtq = Lfalse;
+            retorno.trueEtq = [Ltrue];
+            retorno.falseEtq = [Lfalse];
             return retorno;
         elif (self.tipo == TipoRelacional.MENOR_IGUAL):
             '''
@@ -70,8 +70,8 @@ class Relacional(Expresion):
             self.generador.addIf(val1, val2, '<=', Ltrue);
             self.generador.addGoto(Lfalse);
             retorno = RetornoExpresion('', TipoDato.BOOLEAN, False);
-            retorno.trueEtq = Ltrue;
-            retorno.falseEtq = Lfalse;
+            retorno.trueEtq = [Ltrue];
+            retorno.falseEtq = [Lfalse];
             return retorno;
         elif (self.tipo == TipoRelacional.MAYOR_IGUAL):
             '''
@@ -82,8 +82,8 @@ class Relacional(Expresion):
             self.generador.addIf(val1, val2, '>=', Ltrue);
             self.generador.addGoto(Lfalse);
             retorno = RetornoExpresion('', TipoDato.BOOLEAN, False);
-            retorno.trueEtq = Ltrue;
-            retorno.falseEtq = Lfalse;
+            retorno.trueEtq = [Ltrue];
+            retorno.falseEtq = [Lfalse];
             return retorno;
         elif (self.tipo == TipoRelacional.MENOR):
             '''
@@ -94,8 +94,8 @@ class Relacional(Expresion):
             self.generador.addIf(val1, val2, '<', Ltrue);
             self.generador.addGoto(Lfalse);
             retorno = RetornoExpresion('', TipoDato.BOOLEAN, False);
-            retorno.trueEtq = Ltrue;
-            retorno.falseEtq = Lfalse;
+            retorno.trueEtq = [Ltrue];
+            retorno.falseEtq = [Lfalse];
             return retorno;
         elif (self.tipo == TipoRelacional.MAYOR):
             '''
@@ -106,8 +106,8 @@ class Relacional(Expresion):
             self.generador.addIf(val1, val2, '>', Ltrue);
             self.generador.addGoto(Lfalse);
             retorno = RetornoExpresion('', TipoDato.BOOLEAN, False);
-            retorno.trueEtq = Ltrue;
-            retorno.falseEtq = Lfalse;
+            retorno.trueEtq = [Ltrue];
+            retorno.falseEtq = [Lfalse];
             return retorno;
         # ERROR no se ha podido operar
         _error = _Error(f'No se ha podido efectuar la operacion {self.tipo} con {val1.valor} y {val2.valor}', scope.ambito, self.linea, self.columna, datetime.now())

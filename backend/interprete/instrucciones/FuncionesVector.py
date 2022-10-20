@@ -260,8 +260,8 @@ class Contains(Instruccion):
         self.generador.addOperacion(vector.valor, vector.valor, '1', '+');
         self.generador.addGoto(Lloop);
         retorno = RetornoExpresion('', TipoDato.BOOLEAN, False);
-        retorno.trueEtq = Ltrue;
-        retorno.falseEtq = Lfalse;
+        retorno.trueEtq = [Ltrue];
+        retorno.falseEtq = [Lfalse];
         return retorno;
 
 class Longitud(Instruccion):

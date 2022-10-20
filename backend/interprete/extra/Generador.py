@@ -43,11 +43,10 @@ class Generador:
         return etiqueta;
 
     # añade una etiqueta al código a generar
-    def addEtq(self, etiqueta:str) -> None:
-        if(':' in etiqueta):
-            self.codigo.append(etiqueta);
-        else:
-            self.codigo.append(f'{etiqueta}:');
+    def addEtq(self, etiqueta:str or list) -> None:
+        if(isinstance(etiqueta, list)):
+            etiqueta = ':\n'.join(etiqueta);
+        self.codigo.append(f'{etiqueta}:');
     
     # añade expresion aritmética
     def addOperacion(self, temp:str, izq:str, der:str, operador:str) -> None:
@@ -103,7 +102,7 @@ class Generador:
 
     # añade un error semántico
     def errorSem(self, mensaje:str) -> None:
-        self.codigo.append(mensaje);
+        Lloop:str = self.newEtq();
 
     # añade comentarios
     def addComentario(self, mensaje:str) -> None:

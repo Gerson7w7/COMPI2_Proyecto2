@@ -129,12 +129,17 @@ class Aritmetica(Expresion):
                     '''
                     temp:str = self.generador.newTemp();
                     self.generador.addComentario('MODULO');
+                    if(valIzquierda.esTemp): 
+                        valIzquierda.valor = f'(int){valIzquierda.valor}';
+                    if(valDerecha.esTemp): 
+                        valDerecha.valor = f'(int){valDerecha.valor}';    
                     self.generador.addOperacion(temp, valIzquierda.valor, valDerecha.valor, '%');
                     return RetornoExpresion(temp, valIzquierda.tipo, True);
                 # error no se puede operar izq con der
                 _error = _Error(f'No se puede operar el módulo de {valIzquierda.valor} con {valDerecha.valor}', scope.ambito, self.linea, self.columna, datetime.now())
                 raise Exception(_error);
         #error, tipos diferentes
+        print(str(valIzquierda.tipo) +'=='+ str(valDerecha.tipo))
         _error = _Error(f'No se puede operar un tipo {valIzquierda.tipo.name} con un tipo {valDerecha.tipo.name}', scope.ambito, self.linea, self.columna, datetime.now())
         raise Exception(_error);
 
