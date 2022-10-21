@@ -82,11 +82,22 @@ class Aritmetica(Expresion):
                 if (valIzquierda.tipo == TipoDato.INT64 or valIzquierda.tipo == TipoDato.FLOAT64):
                     # se hace la operacion correspondiente y se pasa el tipo
                     '''
+                    if (valder.valor == 0) goto Lmensaje;
                     temp = valizq / valder;
+                    goto Lsalida;
+                    Lmensaje:
+                        <código de Lmensaje>
+                    Lsalida:
                     '''
                     temp:str = self.generador.newTemp();
+                    Lmensaje:str = self.generador.newEtq();
+                    Lsalida:str = self.generador.newEtq();
                     self.generador.addComentario('DIVISION');
+                    self.generador.addIf(valDerecha.valor, '0', '==', Lmensaje);
                     self.generador.addOperacion(temp, valIzquierda.valor, valDerecha.valor, '/');
+                    self.generador.addGoto(Lsalida);
+                    self.generador.errorSem('No se puede dividir entre 0.', Lmensaje);
+                    self.generador.addEtq(Lsalida);
                     return RetornoExpresion(temp, TipoDato.FLOAT64, True);
                 # error no se puede operar izq con der
                 _error = _Error(f'No se puede dividir {valIzquierda.valor} con {valDerecha.valor}', scope.ambito, self.linea, self.columna, datetime.now())

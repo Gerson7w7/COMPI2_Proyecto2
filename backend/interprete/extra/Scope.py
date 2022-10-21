@@ -22,7 +22,7 @@ class Scope:
         ambito:str = scope.ambito;
         while(scope != None):
             # verificamos que no se haya declarado antes la misma variable
-            if(scope.variables.get(id)):
+            if(scope.variables.get(id) and not (id == 'retorno')):
                 # ERROR: la variable ya ha sido declarada
                 _error = _Error(f'La variable {id} ya ha sido declarada', ambito, linea, columna, datetime.now())
                 raise Exception(_error);
@@ -75,18 +75,22 @@ class Scope:
                     raise Exception(_error);
             scope = scope.padre;
 
-    def guardarFuncion(self, id:str, fn, tipo_retorno:TipoDato, linea:int, columna:int):
+    def guardarFuncion(self, id:str, valor, tipo_retorno:TipoDato, atrArr:AtributosArreglo, linea:int, columna:int, console:Console):
         scope: Scope = self;
         ambito:str = scope.ambito;
         while(scope != None):
-            # verificamos que no se haya declarado antes la misma funcion
-            if(scope.funciones.get(id)):
-                # ERROR: la funcion ya ha sido declarada
+            # verificamos que no se haya declarado antes la misma variable
+            if(scope.variables.get(id)):
+                # ERROR: la variable ya ha sido declarada
                 _error = _Error(f'La función {id} ya ha sido declarado', ambito, linea, columna, datetime.now())
                 raise Exception(_error);
             scope = scope.padre;
-        # procedemos a guardar la funcion
-        self.funciones[id] = fn;
+        # procedemos a crear la variable
+        self.funciones[id] = Simbolo(valor, id, tipo_retorno, True, atrArr, self.size);
+        # lo guardamos en la tabla de simbolos para nuestro reporte de símbolos
+        _tipoDato = str(tipo_retorno.name) if (isinstance(tipo_retorno, TipoDato)) else tipo_retorno;
+        console.appendSimbolo(TablaSimbolo(id, 'Funcion', _tipoDato, ambito, linea, columna));
+        return self.size;
 
     def getFuncion(self, id:str, linea:int, columna:int):
         scope: Scope = self;

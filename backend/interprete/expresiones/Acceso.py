@@ -78,6 +78,8 @@ class AccesoArreglo(Expresion):
         tIndice:str = self.generador.newTemp();
         temp:str = self.generador.newTemp();
         tempRetorno:str = self.generador.newTemp();
+        Lmensaje:str = self.generador.newEtq();
+        Lsalida:str = self.generador.newEtq();
         self.generador.addOperacion(tIndice, '0', '', '');
         self.generador.getStack(temp, val.posicion);
         atrArr = AtributosArreglo(False, None);
@@ -96,12 +98,19 @@ class AccesoArreglo(Expresion):
                 esArr = True;
                 break;
         self.generador.addOperacion(tIndice, tIndice, temp, '+');
+        self.generador.addIf(tIndice, self.dimTam(0, _indices), '>=', Lmensaje);
         if (esArr):
             retorno = RetornoExpresion(tIndice, val.tipo, True);
             retorno.atrArr = atrArr;
+            self.generador.addGoto(Lsalida);
+            self.generador.errorSem('Indice fuera de rango', Lmensaje);
+            self.generador.addEtq(Lsalida);
             return retorno;
         else:
             self.generador.getHeap(tempRetorno, tIndice);
+            self.generador.addGoto(Lsalida);
+            self.generador.errorSem('Indice fuera de rango', Lmensaje);
+            self.generador.addEtq(Lsalida);
             return RetornoExpresion(tempRetorno, val.tipo, True);
 
     def accesoVector(self, val:Simbolo, console:Console, scope:Scope):

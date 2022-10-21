@@ -14,10 +14,20 @@ class Funcion(Instruccion):
         self.bloque = bloque;
 
     def ejecutar(self, console: Console, scope: Scope):
+        '''
+        void self.id() {
+            <código de valBloque>
+            return;
+        }
+        '''
+        scope = Scope(scope, f'Función {self.id}');
+        self.generador.newFuncion(self.id);
+        self.parametros
         if (isinstance(self.retorno_fn, Dimension)):
             scope.guardarFuncion(self.id, self, self.retorno_fn.tipo, self.linea, self.columna);
         else:
             scope.guardarFuncion(self.id, self, self.retorno_fn, self.linea, self.columna);
+        self.generador.cerrarFuncion();
 
     def tipoArgumentos(self, argTipo, i:int, console:Console, scope:Scope):
         if (isinstance(self.parametros[i], DeclaracionArreglo)):

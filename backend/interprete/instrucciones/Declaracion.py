@@ -21,7 +21,7 @@ class Declaracion(Instruccion):
         if (self.tipo != None and val.tipo != self.tipo):
             # error, diferentes tipos de datos
             _error = _Error(f'Tipos incompatibles. Se esperaba un tipo de dato {self.tipo.name} y se encontró {val.tipo}', scope.ambito, self.linea, self.columna, datetime.now());
-            raise Exception(_error); 
+            raise Exception(_error);
         posicion:int = scope.crearVariable(val.valor, self.id, 'Variable', val.tipo, self.mut, val.atrArr, self.linea, self.columna, console);
         if (val.tipo == TipoDato.BOOLEAN):
             '''
@@ -44,20 +44,6 @@ class Declaracion(Instruccion):
             STACK[pos] = val.valor
             '''
             self.generador.setStack(posicion, val.valor);
-    
-    def valorDefault(_tipo:TipoDato):
-        if (_tipo == TipoDato.INT64):
-            return RetornoExpresion(0, TipoDato.INT64, None);
-        elif (_tipo == TipoDato.FLOAT64):
-            return RetornoExpresion(0.0, TipoDato.FLOAT64, None);
-        elif (_tipo == TipoDato.BOOLEAN):
-            return RetornoExpresion(False, TipoDato.BOOLEAN, None);
-        elif (_tipo == TipoDato.CHAR):
-            return RetornoExpresion('\0', TipoDato.CHAR, None);
-        elif (_tipo == TipoDato.STRING):
-            return RetornoExpresion('', TipoDato.STRING, None);
-        elif (_tipo == TipoDato.STR):
-            return RetornoExpresion('', TipoDato.STR, None);
 
 class Asignacion(Instruccion):
     def __init__(self, id:str, expresion:Expresion, linea: int, columna: int):

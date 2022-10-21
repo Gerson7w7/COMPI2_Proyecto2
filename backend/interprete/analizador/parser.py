@@ -111,10 +111,7 @@ def p_parametro(p):
     if (len(p) == 2):
         p[0] = p[1];
     elif (isinstance(p[4], Dimension)):
-        if (len(p[4].dimensiones) == 0):
-            p[0] = Arreglo(True, p[1], p[4], [], True, None, p.lineno(1), p.lexpos(1));
-        else:
-            p[0] = Arreglo(True, p[1], p[4], [], False, None, p.lineno(1), p.lexpos(1));
+        p[0] = DeclaracionArreglo(True, p[1], p[4], None, p.lineno(1), p.lexpos(1));
     else:
         p[0] = Declaracion(True, p[1], p[4], None, p.lineno(1), p.lexpos(1));
 
@@ -246,9 +243,10 @@ def p_type(p):
 def p_type_arreglo(p):
     """
     type_arreglo : CORCHETE_ABRE type_arreglo PUNTO_COMA ENTERO CORCHETE_CIERRA
+        | CORCHETE_ABRE type_arreglo CORCHETE_CIERRA
         | type 
     """
-    if (len(p) == 2):
+    if (len(p) == 2 or len(p) == 4):
         p[0] = Dimension(p[1], [], False);
     else:
         p[2].dimensiones.append(p[4]); p[0] = p[2];

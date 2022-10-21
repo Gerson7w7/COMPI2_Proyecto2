@@ -101,8 +101,11 @@ class Generador:
         self.codigo.append('printf("%c",10);');
 
     # añade un error semántico
-    def errorSem(self, mensaje:str) -> None:
-        Lloop:str = self.newEtq();
+    def errorSem(self, mensaje:str, Lloop:str) -> None:
+        self.addEtq(Lloop);
+        for m in mensaje:
+            self.addPrintf('c', f'(char){ord(m)}');
+        self.newLine();
 
     # añade comentarios
     def addComentario(self, mensaje:str) -> None:
@@ -114,3 +117,9 @@ class Generador:
                 self.codigo[i] = mensaje;
                 return True;
         return False;
+
+    def newFuncion(self, name:str) -> None:
+        self.codigo.append(f'void {name} {{');
+    
+    def cerrarFuncion(self) -> None:
+        self.codigo.append('return;\n}');
