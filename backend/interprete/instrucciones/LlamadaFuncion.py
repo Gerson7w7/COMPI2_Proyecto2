@@ -13,6 +13,7 @@ class LlamadaFuncion(Instruccion):
         self.argumentos = argumentos;
     
     def ejecutar(self, console: Console, scope: Scope):
+        return;
         self.generador.addComentario('LLAMADA A FUNCIÓN');
         newScope = Scope(scope.getGlobal(), 'Funcion');
         newScope.size = 1;

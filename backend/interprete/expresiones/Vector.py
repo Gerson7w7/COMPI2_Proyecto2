@@ -3,7 +3,6 @@ from ..extra.Simbolo import AtributosArreglo
 from ..extra.Retorno import RetornoExpresion
 from .Expresion import Expresion
 from ..extra.Console import Console, _Error
-from ..extra.Scope import Scope
 from datetime import datetime
 
 class Vector(Expresion):
@@ -14,7 +13,7 @@ class Vector(Expresion):
         self.temp = '';
         self.tipo = None;
 
-    def ejecutar(self, console: Console, scope:Scope):
+    def ejecutar(self, console: Console, scope):
         # el vector siempre será de una dimensión
         self.generador.addComentario('VECTOR');
         if (self.valor == None and self.with_capacity == None):
@@ -75,7 +74,7 @@ class Vector(Expresion):
             retorno.atrArr = atrArr;
         return retorno;
 
-    def recorrerLista(self, valor, console:Console, scope:Scope):
+    def recorrerLista(self, valor, console:Console, scope):
         if (isinstance(valor, list)):
             for v in valor:
                 self.recorrerLista(v, console, scope);

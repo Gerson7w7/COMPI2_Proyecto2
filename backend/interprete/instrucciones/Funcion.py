@@ -14,20 +14,26 @@ class Funcion(Instruccion):
         self.bloque = bloque;
 
     def ejecutar(self, console: Console, scope: Scope):
-        '''
-        void self.id() {
-            <código de valBloque>
-            return;
-        }
-        '''
-        scope = Scope(scope, f'Función {self.id}');
-        self.generador.newFuncion(self.id);
-        self.parametros
-        if (isinstance(self.retorno_fn, Dimension)):
-            scope.guardarFuncion(self.id, self, self.retorno_fn.tipo, self.linea, self.columna);
-        else:
-            scope.guardarFuncion(self.id, self, self.retorno_fn, self.linea, self.columna);
-        self.generador.cerrarFuncion();
+        if (self.id != 'main'):
+            '''
+            void self.id() {
+                <código de parametros>
+                <código de valBloque>
+                return;
+            }
+            '''
+            newScope = Scope(scope, f'Función {self.id}');
+            self.generador.newFuncion(self.id);
+            self.generador.addComentario('RESERVANDO ESPACIO PARA PARÁMETROS Y RETURN');
+            i:int = 0;
+            if (self.parametros != None):
+                for param in self.parametros:
+                    i += 1;
+            
+            self.bloque.generador = self.generador;
+            self.bloque.ejecutar(console, newScope, newScope.ambito);
+            self.generador.cerrarFuncion();
+        scope.guardarFuncion(self.id, self, self.retorno_fn, self.linea, self.columna, console);
 
     def tipoArgumentos(self, argTipo, i:int, console:Console, scope:Scope):
         if (isinstance(self.parametros[i], DeclaracionArreglo)):

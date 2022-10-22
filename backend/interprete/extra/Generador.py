@@ -23,9 +23,7 @@ class Generador:
         # cuerpo del código en C
         if(0 < len(self.temporales)):
             codigo += f'double {self.getTemporales()};\n\n';
-        codigo += 'void main(){\n';
         codigo += '\n'.join(self.codigo);
-        codigo += '\nreturn;\n}\n';
         return codigo;
 
     # genera un nuevo temporal
@@ -119,7 +117,7 @@ class Generador:
         return False;
 
     def newFuncion(self, name:str) -> None:
-        self.codigo.append(f'void {name} {{');
+        self.codigo.append(f'void {name}() {{');
     
     def cerrarFuncion(self) -> None:
-        self.codigo.append('return;\n}');
+        self.codigo.append('return;\n}\n');

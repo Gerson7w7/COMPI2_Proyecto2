@@ -2,7 +2,6 @@ from ..extra.Simbolo import AtributosArreglo
 from ..extra.Retorno import RetornoExpresion
 from .Expresion import Expresion
 from ..extra.Console import Console, _Error
-from ..extra.Scope import Scope
 from datetime import datetime
 
 class Arreglo(Expresion):
@@ -14,7 +13,7 @@ class Arreglo(Expresion):
         self.dimensiones = [];
         self.tipo = None;
 
-    def ejecutar(self, console: Console, scope:Scope):
+    def ejecutar(self, console: Console, scope):
         '''
         self.temp = HP;
         tempRetorno = self.temp;
@@ -32,13 +31,13 @@ class Arreglo(Expresion):
         retorno = RetornoExpresion(tempRetorno, self.tipo, True);
         atrArr = AtributosArreglo(False, None);
         atrArr.dimensiones = self.dimensiones;
-        atrArr.size = int(self.dimensiones[0]);
+        atrArr.size = int(self.dimensiones[0]) if (len(self.dimensiones) > 0) else 0;
         retorno.atrArr = atrArr;
         return retorno;
 
     def reservarEspacio(self, valor, agregado:bool):
         if (isinstance(valor, list)):
-            if (not agregado and len(valor) != 1):
+            if (not agregado and len(valor) > 1):
                 self.dimensiones.append(len(valor));
             for v in valor:
                 self.reservarEspacio(v, agregado);
@@ -52,7 +51,7 @@ class Arreglo(Expresion):
         else:
             self.contador += 1;
 
-    def recorrerLista(self, valor, console:Console, scope:Scope):
+    def recorrerLista(self, valor, console:Console, scope):
         if (isinstance(valor, list)):
             for v in valor:
                 self.recorrerLista(v, console, scope);

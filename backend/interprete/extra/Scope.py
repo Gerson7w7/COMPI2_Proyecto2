@@ -1,4 +1,5 @@
 # clase para manejar los entornos, ambitos, env o scopes
+from ..instrucciones.DeclaracionArreglo import Dimension
 from .TablaSimbolo import TablaSimbolo
 from .Tipos import TipoDato 
 from .Simbolo import Simbolo, AtributosArreglo
@@ -75,7 +76,7 @@ class Scope:
                     raise Exception(_error);
             scope = scope.padre;
 
-    def guardarFuncion(self, id:str, valor, tipo_retorno:TipoDato, atrArr:AtributosArreglo, linea:int, columna:int, console:Console):
+    def guardarFuncion(self, id:str, valor, tipo_retorno:TipoDato or Dimension, linea:int, columna:int, console:Console):
         scope: Scope = self;
         ambito:str = scope.ambito;
         while(scope != None):
@@ -86,9 +87,15 @@ class Scope:
                 raise Exception(_error);
             scope = scope.padre;
         # procedemos a crear la variable
-        self.funciones[id] = Simbolo(valor, id, tipo_retorno, True, atrArr, self.size);
+        self.funciones[id] = Simbolo(valor, id, tipo_retorno, True, None, self.size);
         # lo guardamos en la tabla de simbolos para nuestro reporte de símbolos
-        _tipoDato = str(tipo_retorno.name) if (isinstance(tipo_retorno, TipoDato)) else tipo_retorno;
+        _tipoDato:str;
+        if (isinstance(tipo_retorno, TipoDato)):
+            _tipoDato = str(tipo_retorno.name);
+        elif (isinstance(tipo_retorno, Dimension)):
+            _tipoDato = str(tipo_retorno.tipo.name);
+        else:
+            _tipoDato = str(tipo_retorno);
         console.appendSimbolo(TablaSimbolo(id, 'Funcion', _tipoDato, ambito, linea, columna));
         return self.size;
 

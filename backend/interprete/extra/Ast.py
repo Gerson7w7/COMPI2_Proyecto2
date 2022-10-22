@@ -1,4 +1,4 @@
-from ..instrucciones.Instruccion import Instruccion
+from .Simbolo import Simbolo
 from .Console import Console
 from .Scope import Scope
 
@@ -11,13 +11,16 @@ class Ast:
     def ejecutar(self, console: Console, scope: Scope):
         for instruccion in self.instrucciones:
             #try:
+                instruccion.generador = self.generador;
                 instruccion.ejecutar(console, scope);
             # except Exception as e:
             #     # errores para recuperarse
             #     console.append(f'ERROR: {e.args[0].descripcion}. En la línea {e.args[0].linea}, columna {e.args[0].columna}\n');
             #     # agregamos a lista de errores
             #     console.error(e.args[0]);
-        funMain:Instruccion = scope.getFuncion('main', 0, 0);
+        funMain:Simbolo = scope.getFuncion('main', 0, 0);
         # si es el main se ejecuta de una vez
-        funMain.bloque.generador = self.generador;
-        funMain.bloque.ejecutar(console, scope, 'Main');
+        self.generador.newFuncion('main');
+        funMain.valor.bloque.generador = self.generador;
+        funMain.valor.bloque.ejecutar(console, scope, 'Función main');
+        self.generador.cerrarFuncion();

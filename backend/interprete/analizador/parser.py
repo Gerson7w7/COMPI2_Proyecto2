@@ -246,8 +246,10 @@ def p_type_arreglo(p):
         | CORCHETE_ABRE type_arreglo CORCHETE_CIERRA
         | type 
     """
-    if (len(p) == 2 or len(p) == 4):
+    if (len(p) == 2):
         p[0] = Dimension(p[1], [], False);
+    elif (len(p) == 4):
+        p[0] = p[2];
     else:
         p[2].dimensiones.append(p[4]); p[0] = p[2];
 

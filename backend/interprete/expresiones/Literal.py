@@ -2,7 +2,6 @@ from ..extra.Simbolo import AtributosArreglo
 from .Expresion import Expresion
 from ..extra.Tipos import TipoDato
 from ..extra.Console import Console
-from ..extra.Scope import Scope
 from ..extra.Retorno import RetornoExpresion
 
 class Literal(Expresion):
@@ -11,7 +10,7 @@ class Literal(Expresion):
         self.valor = valor;
         self.tipo = tipo;
     
-    def ejecutar(self, console: Console, scope: Scope):
+    def ejecutar(self, console: Console, scope):
         if (self.tipo == TipoDato.STRING or self.tipo == TipoDato.STR):
             '''
             tn = HP;

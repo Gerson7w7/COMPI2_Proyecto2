@@ -1,3 +1,4 @@
+from ..expresiones.Literal import Literal
 from ..expresiones.Expresion import Expresion
 from ..extra.Tipos import TipoDato
 from .Instruccion import Instruccion
@@ -15,9 +16,12 @@ class Declaracion(Instruccion):
         self.valor = valor;
 
     def ejecutar(self, console: Console, scope: Scope):
+        if (self.valor == None):
+            self.valor = self.valorDefault(self.tipo);
         self.valor.generador = self.generador;
         val:RetornoExpresion = self.valor.ejecutar(console, scope);
         # asegurandonos de que sea el mismo tipo de dato para crear la variable
+        print(str(val.tipo)+ '!='+ str(self.tipo))
         if (self.tipo != None and val.tipo != self.tipo):
             # error, diferentes tipos de datos
             _error = _Error(f'Tipos incompatibles. Se esperaba un tipo de dato {self.tipo.name} y se encontró {val.tipo}', scope.ambito, self.linea, self.columna, datetime.now());
@@ -44,6 +48,20 @@ class Declaracion(Instruccion):
             STACK[pos] = val.valor
             '''
             self.generador.setStack(posicion, val.valor);
+
+    def valorDefault(self, _tipo:TipoDato):
+        if (_tipo == TipoDato.INT64):
+            return Literal('0', TipoDato.INT64, self.linea, self.columna);
+        elif (_tipo == TipoDato.FLOAT64):
+            return Literal('0.0', TipoDato.FLOAT64, self.linea, self.columna);
+        elif (_tipo == TipoDato.BOOLEAN):
+            return Literal('0', TipoDato.BOOLEAN, self.linea, self.columna);
+        elif (_tipo == TipoDato.CHAR):
+            return Literal('a', TipoDato.CHAR, self.linea, self.columna);
+        elif (_tipo == TipoDato.STRING):
+            return Literal('a', TipoDato.STRING, self.linea, self.columna);
+        elif (_tipo == TipoDato.STR):
+            return Literal('a', TipoDato.STR, self.linea, self.columna);
 
 class Asignacion(Instruccion):
     def __init__(self, id:str, expresion:Expresion, linea: int, columna: int):

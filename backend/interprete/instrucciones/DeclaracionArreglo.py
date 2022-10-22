@@ -1,3 +1,6 @@
+from ..expresiones.Literal import Literal
+from ..expresiones.Arreglo import Arreglo
+from ..expresiones.Vector import Vector
 from ..extra.Simbolo import AtributosArreglo, Simbolo
 from ..extra.Retorno import RetornoExpresion
 from .Instruccion import Instruccion
@@ -26,6 +29,11 @@ class DeclaracionArreglo(Instruccion):
         STACK[pos] = valor.valor; 
         '''
         self.generador.addComentario('DECLARACION DE ARREGLO');
+        if (self.valor == None):
+            if (self.dimension.esVector):
+                self.valor = Vector(None, None, self.linea, self.columna);
+            else:
+                self.valor = self.valorDefault(self.dimension);
         self.valor.generador = self.generador;
         valor:RetornoExpresion = self.valor.ejecutar(console, scope);
         atrArr = AtributosArreglo(False, None);
@@ -42,6 +50,27 @@ class DeclaracionArreglo(Instruccion):
         else:
             pos:int = scope.crearVariable(valor.valor, self.id, 'Arreglo', valor.tipo, self.mut, valor.atrArr, self.linea, self.columna, console);
         self.generador.setStack(pos, valor.valor);
+
+    def valorDefault(self, dimension:Dimension):
+        arr = Arreglo([], self.linea, self.columna);
+        if (dimension.tipo == TipoDato.INT64):
+            arr.tipo = TipoDato.INT64;
+            return arr;
+        elif (dimension.tipo == TipoDato.FLOAT64):
+            arr.tipo = TipoDato.FLOAT64;
+            return arr;
+        elif (dimension.tipo == TipoDato.BOOLEAN):
+            arr.tipo = TipoDato.BOOLEAN;
+            return arr;
+        elif (dimension.tipo == TipoDato.CHAR):
+            arr.tipo = TipoDato.CHAR;
+            return arr;
+        elif (dimension.tipo == TipoDato.STRING):
+            arr.tipo = TipoDato.STRING;
+            return arr;
+        elif (dimension.tipo == TipoDato.STR):
+            arr.tipo = TipoDato.STR;
+            return arr;
 
 class AsignacionArreglo(Instruccion):
     def __init__(self, id:str, indices:list, expresion:Expresion, linea: int, columna: int): 
