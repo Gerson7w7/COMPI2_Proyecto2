@@ -29,7 +29,9 @@ class Funcion(Instruccion):
             if (self.parametros != None):
                 for param in self.parametros:
                     i += 1;
-            
+            if (self.retorno_fn != None):
+                i += 1;
+            print("ii:: "+i)
             self.bloque.generador = self.generador;
             self.bloque.ejecutar(console, newScope, newScope.ambito);
             self.generador.cerrarFuncion();
