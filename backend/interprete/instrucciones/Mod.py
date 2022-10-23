@@ -2,7 +2,7 @@ from .Funcion import Funcion
 from .Instruccion import Instruccion
 from ..extra.Scope import Scope
 from ..extra.Console import Console, _Error
-from .LlamadaFuncion import Puntero, Referencia
+from ..expresiones.LlamadaFuncion import Puntero, Referencia
 from ..extra.Retorno import RetornoExpresion
 from datetime import datetime
 

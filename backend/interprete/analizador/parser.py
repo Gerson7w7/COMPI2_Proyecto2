@@ -26,7 +26,7 @@ from interprete.instrucciones.FuncionesVector import Push, Insert, Remove, Conta
 from interprete.instrucciones.Instruccion import Instruccion
 from ..instrucciones.ForIn import ForIn
 from ..instrucciones.Funcion import Funcion
-from ..instrucciones.LlamadaFuncion import LlamadaFuncion, Puntero
+from ..expresiones.LlamadaFuncion import LlamadaFuncion, Puntero
 from ..instrucciones.Struct import AsignacionStruct, InstanciaStruct, Struct, ExpresionesStruct
 from interprete.expresiones.Vector import Vector
 
