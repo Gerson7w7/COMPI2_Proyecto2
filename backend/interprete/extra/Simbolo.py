@@ -8,10 +8,11 @@ class AtributosArreglo:
         self.dimensiones = [];
 
 class Simbolo:
-    def __init__(self, valor:str, id: str, tipo: TipoDato, mut:bool, atrArr:AtributosArreglo, posicion:int):
+    def __init__(self, valor:str, id: str, tipo: TipoDato, mut:bool, atrArr:AtributosArreglo, posicion:int, esRef:bool):
         self.valor = valor;
         self.id = id;
         self.tipo = tipo;
         self.mut = mut;
         self.atrArr = atrArr;
         self.posicion = posicion;
+        self.esRef = esRef;

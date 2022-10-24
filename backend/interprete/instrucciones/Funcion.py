@@ -45,14 +45,3 @@ class Funcion(Instruccion):
             self.retorno = self.bloque.ejecutar(console, self.newScope, self.newScope.ambito);
             self.generador.cerrarFuncion();
         scope.guardarFuncion(self.id, self, self.linea, self.columna);
-
-    def tipoRetorno(self):
-        if (self.retorno_fn == None):
-            return None;
-        elif (isinstance(self.retorno_fn, Dimension)):
-            retorno = RetornoExpresion(self.generador.newTemp(), self.retorno_fn.tipo, True);
-            retorno.atrArr = AtributosArreglo(self.retorno_fn.esVector, self.retorno_fn.with_capacity);
-            return retorno;
-        else:
-            retorno = RetornoExpresion(self.generador.newTemp(), self.retorno_fn, True);
-            return retorno;

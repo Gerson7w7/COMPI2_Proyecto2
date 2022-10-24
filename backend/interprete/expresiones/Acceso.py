@@ -5,22 +5,23 @@ from ..extra.Simbolo import AtributosArreglo, Simbolo
 from .Expresion import Expresion
 from ..extra.Console import Console, _Error
 from ..extra.Scope import Scope
-from ..expresiones.Literal import Literal
 from datetime import datetime
 
 class Acceso(Expresion):
     def __init__(self,  id: str, linea:int, columna:int):
         super().__init__(linea, columna)
         self.id = id;
+        self.esRef = False;
 
     def ejecutar(self, console: Console, scope: Scope):
         # buscamos y obtenemos el valor
         '''
         newTemp = STACK[valor.posicion];
         '''
-        valor:RetornoExpresion = scope.getValor(self.id, self.linea, self.columna);
-        newTemp = self.generador.newTemp();
         self.generador.addComentario('ACCESO A VARIABLE');
+        valor:Simbolo = scope.getValor(self.id, self.linea, self.columna);
+        if (self.ref): return RetornoExpresion(valor.posicion, valor.tipo, False, True); # devuelve la posición del arr/vec
+        newTemp = self.generador.newTemp();
         self.generador.getStack(newTemp, valor.posicion);
         retorno = RetornoExpresion(newTemp, valor.tipo, True);
         if (valor.tipo == TipoDato.BOOLEAN):

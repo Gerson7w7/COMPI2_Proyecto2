@@ -1,3 +1,4 @@
+from backend.interprete.instrucciones.Declaracion import Asignacion
 from ..instrucciones.Funcion import Funcion
 from ..extra.Simbolo import Simbolo
 from ..extra.Console import Console, _Error
@@ -13,12 +14,7 @@ class LlamadaFuncion(Expresion):
         self.argumentos = argumentos;
     
     def ejecutar(self, console: Console, scope: Scope):
-        '''
-        tempFuturoPos = SP + scope.size; // tamaño del reg. actual
-        '''
-        tempFuturoPos:str = self.generador.newTemp();
         self.generador.addComentario('LLAMADA A FUNCIÓN');
-        self.generador.addOperacion(tempFuturoPos, 'SP', scope.size, '+'); # posiblemente lo quite :D
         # obtenemos la función 
         funcion:Funcion = scope.getFuncion(self.id, self.linea, self.columna);
         newScope:Scope = funcion.newScope;
@@ -29,20 +25,21 @@ class LlamadaFuncion(Expresion):
             raise Exception(_error);
         for i in range(len(self.argumentos)):
             '''
-            <código de declaración>
+            <código de asignación>
             '''
             if (isinstance(self.argumentos[i], Puntero)):
                 # el pasamos el valor del argumento al parámetro
-                funcion.parametros[i].valor = self.argumentos[i].expresion;
-                funcion.parametros[i].generador = self.generador;
-                funcion.parametros[i].ejecutar(console, newScope);
+                acceso = self.argumentos[i].expresion;
+                acceso.esRef = True;
+                asignacion = Asignacion(funcion.parametros[i].id, acceso, self.linea, self.columna);
+                asignacion.generador = self.generador;
+                asignacion.ejecutar(console, newScope);
             else:
-                funcion.parametros[i].valor = self.argumentos[i];
-                funcion.parametros[i].generador = self.generador;
-                self.argumentos[i].ejecutar(console, newScope);
+                asignacion = Asignacion(funcion.parametros[i].id, self.argumentos[i], self.linea, self.columna);
+                asignacion.generador = self.generador;
+                asignacion.ejecutar(console, newScope);
         # verificando el retorno de la función
-        retorno:RetornoExpresion = funcion.tipoRetorno(scope);
-        return retorno;
+        return funcion.retorno;
 
 class Puntero:
     def __init__(self, expresion):

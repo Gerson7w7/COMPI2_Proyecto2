@@ -31,7 +31,7 @@ class Scope:
         # procedemos a crear la variable
         posicion:int = self.size;
         self.size += 1;
-        self.variables[id] = Simbolo(valor, id, tipoDato, mut, atrArr, posicion);
+        self.variables[id] = Simbolo(valor, id, tipoDato, mut, atrArr, posicion, False);
         # lo guardamos en la tabla de simbolos para nuestro reporte de símbolos
         _tipoDato = str(tipoDato.name) if (isinstance(tipoDato, TipoDato)) else tipoDato;
         console.appendSimbolo(TablaSimbolo(id, tipoSimbolo, _tipoDato, ambito, linea, columna));
@@ -64,7 +64,7 @@ class Scope:
                 val:Simbolo = scope.variables.get(id);
                 if (val.tipo == None or val.tipo == valor.tipo):
                     if (val.mut):
-                        scope.variables.update({id : Simbolo(valor.valor, id, valor.tipo, True, val.atrArr, val.posicion)});
+                        scope.variables.update({id : Simbolo(valor.valor, id, valor.tipo, True, val.atrArr, val.posicion, valor.esRef)});
                         return val.posicion;
                     else:
                         # error, variable no mutable
