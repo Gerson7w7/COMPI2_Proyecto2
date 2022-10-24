@@ -16,12 +16,12 @@ class LlamadaFuncion(Expresion):
         '''
         tempFuturoPos = SP + scope.size; // tamaño del reg. actual
         '''
-        newScope = Scope(scope.getGlobal(), 'Funcion');
         tempFuturoPos:str = self.generador.newTemp();
         self.generador.addComentario('LLAMADA A FUNCIÓN');
         self.generador.addOperacion(tempFuturoPos, 'SP', scope.size, '+'); # posiblemente lo quite :D
         # obtenemos la función 
         funcion:Funcion = scope.getFuncion(self.id, self.linea, self.columna);
+        newScope:Scope = funcion.newScope;
         # verificando si la cantidad de argumentos son == a la cantidad de parámetros de la función
         if (len(self.argumentos) != len(funcion.parametros)):
             # ERROR. Se esperaban x parametros y se encontraron x argumentos

@@ -14,7 +14,8 @@ class Funcion(Instruccion):
         self.parametros = parametros;
         self.retorno_fn = retorno_fn;
         self.bloque = bloque;
-        self.newScope = None;
+        self.newScope:Scope = None;
+        self.retorno:RetornoExpresion = None;
 
     def ejecutar(self, console: Console, scope: Scope):
         if (self.id != 'main'):
@@ -27,17 +28,22 @@ class Funcion(Instruccion):
             '''
             self.newScope = Scope(scope, f'Función {self.id}');
             self.generador.newFuncion(self.id);
-            self.bloque.generador = self.generador;
-            self.bloque.ejecutar(console, self.newScope, self.newScope.ambito);
-            self.generador.cerrarFuncion();
             for param in self.parametros:
                 if (isinstance(param, Declaracion)):
                     self.newScope.crearVariable(None, param.id, 'Parametro por valor', param.tipo, True, None, self.linea, self.columna, console);
                 else:
                     self.newScope.crearVariable(None, param.id, 'Parametro por referencia', param.dimension.tipo, True, param.atrArr, self.linea, self.columna, console);
             if (self.retorno_fn != None):
-                if (isinstance(self.retorno_fn, Dimension))
-                self.newScope.crearVariable(None, )
+                tipoRetorno:TipoDato;
+                if (isinstance(self.retorno_fn, Dimension)):
+                    tipoRetorno = self.retorno_fn.tipo;
+                else:
+                    tipoRetorno = self.retorno_fn;
+                self.newScope.crearVariable(None, 'retorno', 'valor de retorno', tipoRetorno, True, None, self.linea, self.columna, console);
+            
+            self.bloque.generador = self.generador;
+            self.retorno = self.bloque.ejecutar(console, self.newScope, self.newScope.ambito);
+            self.generador.cerrarFuncion();
         scope.guardarFuncion(self.id, self, self.linea, self.columna);
 
     def tipoRetorno(self):
