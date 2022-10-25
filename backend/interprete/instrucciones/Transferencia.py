@@ -40,3 +40,11 @@ class Transferencia(Instruccion):
             else:
                 _error = _Error(f'No se esperaba la sentencia CONTINUE', scope.ambito, self.linea, self.columna, datetime.now());
                 raise Exception(_error);
+        elif (self.tipo == TipoTransferencia.RETURN):
+            '''
+            <código de retorno>
+            STACK[pos] = val.valor;
+            '''
+            val:RetornoExpresion = self.retorno.ejecutar(console, scope);
+            pos:int = scope.setValor('retorno', val, self.linea, self.columna);
+            self.generador.setStack(pos, val.valor);

@@ -19,11 +19,16 @@ class Acceso(Expresion):
         newTemp = STACK[valor.posicion];
         '''
         self.generador.addComentario('ACCESO A VARIABLE');
-        valor:Simbolo = scope.getValor(self.id, self.linea, self.columna);
-        if (self.ref): return RetornoExpresion(valor.posicion, valor.tipo, False, True); # devuelve la posición del arr/vec
         newTemp = self.generador.newTemp();
-        self.generador.getStack(newTemp, valor.posicion);
+        valor:Simbolo = scope.getValor(self.id, self.linea, self.columna);
         retorno = RetornoExpresion(newTemp, valor.tipo, True);
+        if (valor.atrArr != None):
+            retorno.atrArr = valor.atrArr;
+        if (self.esRef): 
+            retorno.esRef = True;
+            retorno.valor = valor.posicion;
+            return retorno; # devuelve la posición del arr/vec
+        self.generador.getStack(newTemp, valor.posicion);
         if (valor.tipo == TipoDato.BOOLEAN):
             '''
             if (retorno.valor == 1) goto trueEtq;
@@ -33,9 +38,6 @@ class Acceso(Expresion):
             retorno.falseEtq = [self.generador.newEtq()];
             self.generador.addIf(retorno.valor, '1', '==', retorno.trueEtq[0]);
             self.generador.addGoto(retorno.falseEtq[0]);
-            return retorno;
-        if (valor.atrArr != None):
-            retorno.atrArr = valor.atrArr;
         return retorno;
         
 class AccesoArreglo(Expresion):

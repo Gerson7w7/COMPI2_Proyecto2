@@ -1,4 +1,3 @@
-from ..expresiones.Literal import Literal
 from ..expresiones.Arreglo import Arreglo
 from ..expresiones.Vector import Vector
 from ..extra.Simbolo import AtributosArreglo, Simbolo
@@ -41,7 +40,7 @@ class DeclaracionArreglo(Instruccion):
             for dim in self.dimension.dimensiones:
                 atrArr.dimensiones.append(dim);
             atrArr.dimensiones.reverse();
-            if (not valor.atrArr.esVector and atrArr.dimensiones != valor.atrArr.dimensiones):
+            if (not valor.atrArr.esVector and atrArr.dimensiones != valor.atrArr.dimensiones and len(atrArr.dimensiones) > 0):
                 _error = _Error(f'Las dimensiones de la expresión no son iguales a las indicadas.', scope.ambito, self.linea, self.columna, datetime.now())
                 raise Exception(_error);
         if (valor.atrArr.esVector):
@@ -82,6 +81,7 @@ class AsignacionArreglo(Instruccion):
     def ejecutar(self, console: Console, scope):
         # aquí obtenemos el puntero hacia la primera posición del heap
         val:Simbolo = scope.getValor(self.id, self.linea, self.columna);
+        print("id declaracion:: "+str(self.id)+"    esrEF:: "+str(val.esRef))
         # obtenemos el valor de la expresion
         if (val.atrArr.esVector):
             self.asignacionVector(val, console, scope);
@@ -116,6 +116,10 @@ class AsignacionArreglo(Instruccion):
         temp:str = self.generador.newTemp();
         self.generador.addOperacion(tIndice, '0', '', '');
         self.generador.getStack(temp, val.posicion);
+        print("sisoi a medias")
+        if (val.esRef):
+            print("sisoi")
+            self.generador.getStack(temp, temp);
         atrArr = AtributosArreglo(False, None);
         esArr:bool = False;
         for i in range(len(val.atrArr.dimensiones)):

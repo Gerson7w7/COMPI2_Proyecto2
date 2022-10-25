@@ -21,7 +21,6 @@ class Declaracion(Instruccion):
         self.valor.generador = self.generador;
         val:RetornoExpresion = self.valor.ejecutar(console, scope);
         # asegurandonos de que sea el mismo tipo de dato para crear la variable
-        print(str(val.tipo)+ '!='+ str(self.tipo))
         if (self.tipo != None and val.tipo != self.tipo):
             # error, diferentes tipos de datos
             _error = _Error(f'Tipos incompatibles. Se esperaba un tipo de dato {self.tipo.name} y se encontró {val.tipo}', scope.ambito, self.linea, self.columna, datetime.now());
@@ -70,8 +69,12 @@ class Asignacion(Instruccion):
         self.expresion = expresion;
 
     def ejecutar(self, console: Console, scope: Scope):
-        self.expresion.generador = self.generador;
-        val:RetornoExpresion = self.expresion.ejecutar(console, scope);
+        val:RetornoExpresion;
+        if (isinstance(self.expresion, RetornoExpresion)):
+            val = self.expresion;
+        else:
+            self.expresion.generador = self.generador;
+            val = self.expresion.ejecutar(console, scope);
         posicion:int = scope.setValor(self.id, val, self.linea, self.columna);
         if (val.tipo == TipoDato.BOOLEAN):
             '''

@@ -18,12 +18,12 @@ class Scope:
         if(self.padre != None): self.size = self.padre.size;
     
     # función para crear una variable
-    def crearVariable(self, valor:str, id: str, tipoSimbolo:str, tipoDato: TipoDato, mut:bool, atrArr:AtributosArreglo, linea: int, columna: int, console:Console) -> int:
+    def crearVariable(self, valor:str, id: str, tipoSimbolo:str, tipoDato: TipoDato, mut:bool, atrArr:AtributosArreglo, linea: int, columna: int, console:Console, esRef=False) -> int:
         scope: Scope = self;
         ambito:str = scope.ambito;
         while(scope != None):
             # verificamos que no se haya declarado antes la misma variable
-            if(scope.variables.get(id) and not (id == 'retorno')):
+            if(scope.variables.get(id)):
                 # ERROR: la variable ya ha sido declarada
                 _error = _Error(f'La variable {id} ya ha sido declarada', ambito, linea, columna, datetime.now())
                 raise Exception(_error);
@@ -31,7 +31,7 @@ class Scope:
         # procedemos a crear la variable
         posicion:int = self.size;
         self.size += 1;
-        self.variables[id] = Simbolo(valor, id, tipoDato, mut, atrArr, posicion, False);
+        self.variables[id] = Simbolo(valor, id, tipoDato, mut, atrArr, posicion, esRef);
         # lo guardamos en la tabla de simbolos para nuestro reporte de símbolos
         _tipoDato = str(tipoDato.name) if (isinstance(tipoDato, TipoDato)) else tipoDato;
         console.appendSimbolo(TablaSimbolo(id, tipoSimbolo, _tipoDato, ambito, linea, columna));
@@ -83,12 +83,20 @@ class Scope:
             # verificamos que no se haya declarado antes la misma funcion
             if(scope.funciones.get(id)):
                 # ERROR: la funcion ya ha sido declarada
-                _error = _Error(f'La función {id} ya ha sido declarado', ambito, linea, columna, datetime.now())
+                _error = _Error(f'La función {id} ya ha sido declarado', ambito, linea, columna, datetime.now());
                 raise Exception(_error);
             scope = scope.padre;
         # procedemos a guardar la funcion
         self.funciones[id] = fn;
         # lo guardamos en la tabla de simbolos para nuestro reporte de símbolos
+
+    def setFuncionScope(self, id:str, newScope):
+        scope:Scope = self.getGlobal();
+        if (scope.funciones.get(id) != None):
+            fn = scope.funciones.get(id);
+            fn.newScope = newScope;
+            scope.variables.update({id : fn});
+            return;
 
     def getFuncion(self, id:str, linea:int, columna:int):
         scope: Scope = self;
