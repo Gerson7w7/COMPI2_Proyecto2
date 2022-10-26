@@ -14,18 +14,23 @@ class Declaracion(Instruccion):
         self.id = id;
         self.tipo = tipo;
         self.valor = valor;
+        self.tipoSimbolo = 'Variable';
 
     def ejecutar(self, console: Console, scope: Scope):
+        val:RetornoExpresion;
         if (self.valor == None):
             self.valor = self.valorDefault(self.tipo);
-        self.valor.generador = self.generador;
-        val:RetornoExpresion = self.valor.ejecutar(console, scope);
+        elif (isinstance(self.valor, RetornoExpresion)):
+            val = self.valor;
+        else:
+            self.valor.generador = self.generador;
+            val = self.valor.ejecutar(console, scope);
         # asegurandonos de que sea el mismo tipo de dato para crear la variable
         if (self.tipo != None and val.tipo != self.tipo):
             # error, diferentes tipos de datos
             _error = _Error(f'Tipos incompatibles. Se esperaba un tipo de dato {self.tipo.name} y se encontró {val.tipo}', scope.ambito, self.linea, self.columna, datetime.now());
             raise Exception(_error);
-        posicion:int = scope.crearVariable(val.valor, self.id, 'Variable', val.tipo, self.mut, val.atrArr, self.linea, self.columna, console);
+        posicion:int = scope.crearVariable(val.valor, self.id, self.tipoSimbolo, val.tipo, self.mut, val.atrArr, self.linea, self.columna, console, );
         if (val.tipo == TipoDato.BOOLEAN):
             '''
             val.EV:
@@ -70,11 +75,8 @@ class Asignacion(Instruccion):
 
     def ejecutar(self, console: Console, scope: Scope):
         val:RetornoExpresion;
-        if (isinstance(self.expresion, RetornoExpresion)):
-            val = self.expresion;
-        else:
-            self.expresion.generador = self.generador;
-            val = self.expresion.ejecutar(console, scope);
+        self.expresion.generador = self.generador;
+        val = self.expresion.ejecutar(console, scope);
         posicion:int = scope.setValor(self.id, val, self.linea, self.columna);
         if (val.tipo == TipoDato.BOOLEAN):
             '''

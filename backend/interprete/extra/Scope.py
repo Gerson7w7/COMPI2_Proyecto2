@@ -25,6 +25,7 @@ class Scope:
             # verificamos que no se haya declarado antes la misma variable
             if(scope.variables.get(id)):
                 # ERROR: la variable ya ha sido declarada
+                print(id)
                 _error = _Error(f'La variable {id} ya ha sido declarada', ambito, linea, columna, datetime.now())
                 raise Exception(_error);
             scope = scope.padre;
@@ -90,13 +91,10 @@ class Scope:
         self.funciones[id] = fn;
         # lo guardamos en la tabla de simbolos para nuestro reporte de símbolos
 
-    def setFuncionScope(self, id:str, newScope):
+    def setFuncion(self, id:str, fn):
         scope:Scope = self.getGlobal();
         if (scope.funciones.get(id) != None):
-            fn = scope.funciones.get(id);
-            fn.newScope = newScope;
             scope.variables.update({id : fn});
-            return;
 
     def getFuncion(self, id:str, linea:int, columna:int):
         scope: Scope = self;

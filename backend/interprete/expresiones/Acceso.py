@@ -101,7 +101,7 @@ class AccesoArreglo(Expresion):
                 esArr = True;
                 break;
         self.generador.addOperacion(tIndice, tIndice, temp, '+');
-        self.generador.addIf(tIndice, self.dimTam(0, _indices), '>=', Lmensaje);
+        self.generador.addIf(tIndice, self.dimTam(0, _indices), '<', Lmensaje);
         if (esArr):
             retorno = RetornoExpresion(tIndice, val.tipo, True);
             retorno.atrArr = atrArr;
@@ -149,12 +149,17 @@ class AccesoArreglo(Expresion):
         else:
             return RetornoExpresion(temp, val.tipo, True);
 
-    def dimTam(self, indice:int, dimensiones:list) -> int:
-        total:int = 1;
+    def dimTam(self, indice:int, dimensiones:list) -> str:
+        '''
+        tempTotal = 1;
+        tempTotal = tempTotal * dimensiones[indice];
+        '''
+        tempTotal:str = self.generador.newTemp();
+        self.generador.addOperacion(tempTotal, '1', '', '');
         while(indice < len(dimensiones)):
-            total *= dimensiones[indice];
+            self.generador.addOperacion(tempTotal, tempTotal, dimensiones[indice], '*');
             indice += 1;
-        return total
+        return tempTotal
 
 class AccesoStruct(Expresion):
     def __init__(self, id:Acceso, atributo:str, linea, columna):

@@ -19,7 +19,9 @@ class LlamadaFuncion(Expresion):
         self.generador.addComentario('LLAMADA A FUNCIÓN');
         # obtenemos la función 
         funcion:Funcion = scope.getFuncion(self.id, self.linea, self.columna);
-        newScope:Scope = funcion.newScope;
+        newScope:Scope = Scope(scope.getGlobal(), f'Funcion {self.id}');
+        newScope.size = scope.size;
+        print("size::::: " +str(newScope.size))
         # verificando si la cantidad de argumentos son == a la cantidad de parámetros de la función
         if (len(self.argumentos) != len(funcion.parametros)):
             # ERROR. Se esperaban x parametros y se encontraron x argumentos
@@ -29,18 +31,26 @@ class LlamadaFuncion(Expresion):
             '''
             <código de declaración>
             '''
-            asignacion:Asignacion;
             if (isinstance(self.argumentos[i], Puntero)):
                 # el pasamos el valor del argumento al parámetro
                 acceso = self.argumentos[i].expresion;
                 acceso.esRef = True;
                 acceso.generador = self.generador;
-                asignacion = Asignacion(funcion.parametros[i].id, acceso.ejecutar(console, scope), self.linea, self.columna);
+                funcion.parametros[i].valor = acceso.ejecutar(console, scope);
+                funcion.parametros[i].tipoSimbolo = 'Paso por referencia';
             else:
                 self.argumentos[i].generador = self.generador;
-                asignacion = Asignacion(funcion.parametros[i].id, self.argumentos[i].ejecutar(console, scope), self.linea, self.columna);
-            asignacion.generador = self.generador;
-            asignacion.ejecutar(console, newScope);
+                funcion.parametros[i].valor = self.argumentos[i].ejecutar(console, scope);
+                funcion.parametros[i].tipoSimbolo = 'Paso por valor';
+            funcion.parametros[i].generador = self.generador;
+            funcion.parametros[i].ejecutar(console, newScope);
+        if (funcion.retorno_fn != None):
+            tipoRetorno:TipoDato;
+            if (isinstance(self.retorno_fn, Dimension)):
+                tipoRetorno = self.retorno_fn.tipo;
+            else:
+                tipoRetorno = self.retorno_fn;
+            newScope.crearVariable(None, 'retorno', 'Retorno', tipoRetorno, True, None, self.linea, self.columna, console);
         '''
         self.id();
         '''
@@ -55,7 +65,9 @@ class LlamadaFuncion(Expresion):
             temp:str = self.generador.newTemp();
             self.generador.getStack(temp, valRetorno.posicion);
             retorno = RetornoExpresion(temp, valRetorno.tipo, True);
-        scope.setFuncionScope(funcion.id, newScope);
+        funcion.sePuedeEjecutar = True;
+        funcion.newScope = newScope;
+        scope.setFuncion(funcion.id, funcion);
         return retorno;
 
 class Puntero:

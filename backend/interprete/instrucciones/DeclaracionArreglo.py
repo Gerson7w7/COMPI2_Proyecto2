@@ -34,7 +34,11 @@ class DeclaracionArreglo(Instruccion):
             else:
                 self.valor = self.valorDefault(self.dimension);
         self.valor.generador = self.generador;
-        valor:RetornoExpresion = self.valor.ejecutar(console, scope);
+        valor:RetornoExpresion;
+        if (isinstance(self.valor, RetornoExpresion)):
+            valor = self.valor;
+        else: 
+            valor = self.valor.ejecutar(console, scope);
         atrArr = AtributosArreglo(False, None);
         if (self.dimension != None):
             for dim in self.dimension.dimensiones:
