@@ -19,7 +19,7 @@ class Casteo(Expresion):
             val.tipo = TipoDato.INT64;
             return val;
         elif (self.tipo == TipoDato.FLOAT64):
-            val.tipo == TipoDato.FLOAT64;
+            val.tipo = TipoDato.FLOAT64;
             return val;
         elif (self.tipo == TipoDato.BOOLEAN):
             '''

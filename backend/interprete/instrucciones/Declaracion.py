@@ -15,6 +15,7 @@ class Declaracion(Instruccion):
         self.tipo = tipo;
         self.valor = valor;
         self.tipoSimbolo = 'Variable';
+        self.regActual:int = None;
 
     def ejecutar(self, console: Console, scope: Scope):
         val:RetornoExpresion;
@@ -30,28 +31,33 @@ class Declaracion(Instruccion):
             # error, diferentes tipos de datos
             _error = _Error(f'Tipos incompatibles. Se esperaba un tipo de dato {self.tipo.name} y se encontró {val.tipo}', scope.ambito, self.linea, self.columna, datetime.now());
             raise Exception(_error);
-        posicion:int = scope.crearVariable(val.valor, self.id, self.tipoSimbolo, val.tipo, self.mut, val.atrArr, self.linea, self.columna, console, );
+        posicion:int = scope.crearVariable(val.valor, self.id, self.tipoSimbolo, val.tipo, self.mut, val.atrArr, self.linea, self.columna, console, val.esRef);
+        posicion = posicion + self.regActual if (self.regActual != None) else posicion;
+        temp:str= self.generador.newTemp();
+        self.generador.addOperacion(temp, 'SP', posicion, '+');
         if (val.tipo == TipoDato.BOOLEAN):
             '''
+            temp = SP + pos;
             val.EV:
-                STACK[pos] = 1;
+                STACK[temp] = 1;
                 goto Salida;
             val.EF:
-                STACK[pos] = 0;
+                STACK[temp] = 0;
             Lsalida:
             '''
             lSalida = self.generador.newEtq();
             self.generador.addEtq(val.trueEtq);
-            self.generador.setStack(posicion, '1');
+            self.generador.setStack(temp, '1');
             self.generador.addGoto(lSalida);
             self.generador.addEtq(val.falseEtq);
-            self.generador.setStack(posicion, '0');
+            self.generador.setStack(temp, '0');
             self.generador.addEtq(lSalida);
         else:
             '''
-            STACK[pos] = val.valor
+            temp = SP + pos;
+            STACK[temp] = val.valor
             '''
-            self.generador.setStack(posicion, val.valor);
+            self.generador.setStack(temp, val.valor);
 
     def valorDefault(self, _tipo:TipoDato):
         if (_tipo == TipoDato.INT64):
@@ -78,24 +84,28 @@ class Asignacion(Instruccion):
         self.expresion.generador = self.generador;
         val = self.expresion.ejecutar(console, scope);
         posicion:int = scope.setValor(self.id, val, self.linea, self.columna);
+        temp:str= self.generador.newTemp();
+        self.generador.addOperacion(temp, 'SP', posicion, '+');
         if (val.tipo == TipoDato.BOOLEAN):
             '''
+            temp = SP + pos;
             val.EV:
-                STACK[pos] = 1;
+                STACK[temp] = 1;
                 goto Salida;
             val.EF:
-                STACK[pos] = 0;
+                STACK[temp] = 0;
             Lsalida:
             '''
             lSalida = self.generador.newEtq();
             self.generador.addEtq(val.trueEtq);
-            self.generador.setStack(posicion, '1');
+            self.generador.setStack(temp, '1');
             self.generador.addGoto(lSalida);
             self.generador.addEtq(val.falseEtq);
-            self.generador.setStack(posicion, '0');
+            self.generador.setStack(temp, '0');
             self.generador.addEtq(lSalida);
         else:
             '''
-            STACK[pos] = val.valor
+            temp = SP + pos;
+            STACK[temp] = val.valor;
             '''
-            self.generador.setStack(posicion, val.valor);
+            self.generador.setStack(temp, val.valor);

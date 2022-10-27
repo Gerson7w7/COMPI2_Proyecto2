@@ -33,7 +33,8 @@ class Push(Instruccion):
             HEAP[temp] = val.valor;
             temp = temp + 1;
             HEAP[temp] = -1;
-            STACK[pos] = tempRetorno;
+            tempPos = SP + pos;
+            STACK[tempPos] = tempRetorno;
         '''
         # ejecutando la expresión
         self.generador.addComentario('PUSH');
@@ -79,7 +80,9 @@ class Push(Instruccion):
             vector.atrArr.with_capacity = vector.atrArr.with_capacity * 2;
         vector.valor = RetornoExpresion(tempRetorno, vector.tipo, True);
         pos:int = scope.setValor(self.id.id, vector, self.linea, self.columna);
-        self.generador.setStack(pos, tempRetorno);
+        tempPos:str= self.generador.newTemp();
+        self.generador.addOperacion(tempPos, 'SP', pos, '+');
+        self.generador.setStack(tempPos, tempRetorno);
 
 class Insert(Instruccion):
     def __init__(self, id:Expresion, exp1:Expresion, exp2:Expresion, linea: int, columna: int):

@@ -16,7 +16,8 @@ class Acceso(Expresion):
     def ejecutar(self, console: Console, scope: Scope):
         # buscamos y obtenemos el valor
         '''
-        newTemp = STACK[valor.posicion];
+        tempPos = SP + pos;
+        newTemp = STACK[tempPos];
         '''
         self.generador.addComentario('ACCESO A VARIABLE');
         newTemp = self.generador.newTemp();
@@ -24,11 +25,13 @@ class Acceso(Expresion):
         retorno = RetornoExpresion(newTemp, valor.tipo, True);
         if (valor.atrArr != None):
             retorno.atrArr = valor.atrArr;
+        tempPos:str= self.generador.newTemp();
+        self.generador.addOperacion(tempPos, 'SP', valor.posicion, '+');
         if (self.esRef): 
             retorno.esRef = True;
-            retorno.valor = valor.posicion;
+            retorno.valor = tempPos;
             return retorno; # devuelve la posición del arr/vec
-        self.generador.getStack(newTemp, valor.posicion);
+        self.generador.getStack(newTemp, tempPos);
         if (valor.tipo == TipoDato.BOOLEAN):
             '''
             if (retorno.valor == 1) goto trueEtq;
@@ -58,7 +61,8 @@ class AccesoArreglo(Expresion):
         # indices para obtener el valor deseado
         '''
         tIndice = 0;
-        temp = STACK[val.posicion];
+        tempPos = SP + pos;
+        temp = STACK[tempPos];
         t1 = i*iDim;
         tIndice = tIndice + t1;
         ...
@@ -83,8 +87,16 @@ class AccesoArreglo(Expresion):
         tempRetorno:str = self.generador.newTemp();
         Lmensaje:str = self.generador.newEtq();
         Lsalida:str = self.generador.newEtq();
+        tempPos:str= self.generador.newTemp();
         self.generador.addOperacion(tIndice, '0', '', '');
-        self.generador.getStack(temp, val.posicion);
+        self.generador.addOperacion(tempPos, 'SP', val.posicion, '+');
+        self.generador.getStack(temp, tempPos);
+        if (val.esRef):
+            '''
+            <> // ref del arreglo
+            temp = STACK[temp]; // valor del arreglo
+            '''
+            self.generador.getStack(temp, temp);
         atrArr = AtributosArreglo(False, None);
         esArr:bool = False;
         for i in range(len(val.atrArr.dimensiones)):
@@ -119,7 +131,8 @@ class AccesoArreglo(Expresion):
     def accesoVector(self, val:Simbolo, console:Console, scope:Scope):
         # indices para obtener el valor deseado
         '''
-        temp = STACK[val.posicion];
+        tempPos = SP + pos;
+        temp = STACK[tempPos];
         '''
         self.generador.addComentario('ACCESO A ARREGLO');
         _indices:list = [];
@@ -132,7 +145,9 @@ class AccesoArreglo(Expresion):
                 raise Exception(_error);
             _indices.append(index.valor);
         temp:str = self.generador.newTemp();
-        self.generador.getStack(temp, val.posicion);
+        tempPos:str= self.generador.newTemp();
+        self.generador.addOperacion(tempPos, 'SP', val.posicion, '+');
+        self.generador.getStack(temp, tempPos);
         for i in _indices:
             '''
             temp = temp + indices[n];

@@ -43,8 +43,11 @@ class Transferencia(Instruccion):
         elif (self.tipo == TipoTransferencia.RETURN):
             '''
             <código de retorno>
+            temp = SP + pos;
             STACK[pos] = val.valor;
             '''
             val:RetornoExpresion = self.retorno.ejecutar(console, scope);
             pos:int = scope.setValor('retorno', val, self.linea, self.columna);
-            self.generador.setStack(pos, val.valor);
+            temp:str= self.generador.newTemp();
+            self.generador.addOperacion(temp, 'SP', pos, '+');
+            self.generador.setStack(temp, val.valor);

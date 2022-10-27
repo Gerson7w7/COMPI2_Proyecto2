@@ -24,12 +24,13 @@ class ForIn(Instruccion):
             '''
             <código inferiorVal>
             <código superiorVal>
+            tempPos = SP + val.posicion;
             Lloop:
-                temp = STACK[val.posicion];
+                temp = STACK[tempPos];
                 if (temp > superiorVal.valor) goto Lsalida;
                 <código bloque>
                 temp = temp + 1;
-                STACK[val.posicion] = temp;
+                STACK[tempPos] = temp;
                 goto Lloop;
             Lsalida: 
             '''
@@ -46,25 +47,28 @@ class ForIn(Instruccion):
             Lloop:str = self.generador.newEtq();
             Lsalida:str = self.generador.newEtq();
             temp:str = self.generador.newTemp();
+            tempPos:str= self.generador.newTemp();
             val:Simbolo = newScope.getValor(self.id, self.linea, self.columna);
+            self.generador.addOperacion(tempPos, 'SP', val.posicion, '+');
             self.generador.addEtq(Lloop);
-            self.generador.getStack(temp, val.posicion);
+            self.generador.getStack(temp, tempPos);
             self.generador.addIf(temp, superiorVal.valor, '>', Lsalida);
             console.breaks.append(Lsalida);
             console.continues.append(Lloop);
             self.bloque.generador = self.generador;
             valRetorno:RetornoExpresion = self.bloque.ejecutar(console, newScope, 'For In');
             self.generador.addOperacion(temp, temp, '1', '+');
-            self.generador.setStack(val.posicion, temp);
+            self.generador.setStack(tempPos, temp);
             self.generador.addGoto(Lloop);
             self.generador.addEtq(Lsalida);
         else:
             '''
             <código valArr>
             tempLim = valArr.valor + valArr.atrArr.dimensiones[0];
+            tempPos = SP + pos;
             Lloop:
                 temp = HEAP[valArr.valor];
-                STACK[pos] = temp;
+                STACK[tempPos] = temp;
                 if (valArr.valor > tempLim) goto Lsalida;
                 <código bloque>
                 valArr.valor = valArr.valor + 1;
@@ -76,6 +80,7 @@ class ForIn(Instruccion):
             Lsalida:str = self.generador.newEtq();
             temp:str = self.generador.newTemp();
             tempLim:str = self.generador.newTemp();
+            tempPos:str= self.generador.newTemp();
             # ejecutamos el vector/arreglo
             self.iterable.generador = self.generador;
             valArr:RetornoExpresion = self.iterable.ejecutar(console, newScope);
@@ -83,7 +88,8 @@ class ForIn(Instruccion):
             self.generador.addEtq(Lloop);
             self.generador.getHeap(temp, valArr.valor);
             posicion:int = newScope.crearVariable(temp, self.id, 'Variable', valArr.tipo, True, None, self.linea, self.columna, console);
-            self.generador.setStack(posicion, temp);
+            self.generador.addOperacion(tempPos, 'SP', posicion, '+');
+            self.generador.setStack(tempPos, temp);
             self.generador.addIf(valArr.valor, tempLim, '>=', Lsalida);
             console.breaks.append(Lsalida);
             console.continues.append(Lloop);

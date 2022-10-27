@@ -69,7 +69,7 @@ class Vector(Expresion):
             self.generador.addOperacion('HP', 'HP', valCapacity.valor, '+');
             self.generador.setHeap(self.temp, '-1');
             retorno = RetornoExpresion(self.temp, self.tipo, True);
-            atrArr = AtributosArreglo(True, int(valCapacity.valor));
+            atrArr = AtributosArreglo(True, valCapacity.valor);
             atrArr.size = 0;
             retorno.atrArr = atrArr;
         return retorno;

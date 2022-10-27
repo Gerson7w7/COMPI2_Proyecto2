@@ -21,11 +21,13 @@ class DeclaracionArreglo(Instruccion):
         self.id = id;
         self.dimension = dimension;
         self.valor = valor;
+        self.regActual = None;
 
     def ejecutar(self, console: Console, scope):
         '''
         <código de arreglo>
-        STACK[pos] = valor.valor; 
+        temp = SP + pos;
+        STACK[temp] = valor.valor; 
         '''
         self.generador.addComentario('DECLARACION DE ARREGLO');
         if (self.valor == None):
@@ -49,10 +51,13 @@ class DeclaracionArreglo(Instruccion):
                 raise Exception(_error);
         if (valor.atrArr.esVector):
             valor.atrArr.dimensiones = atrArr.dimensiones;
-            pos:int = scope.crearVariable(valor.valor, self.id, 'Vector', valor.tipo, self.mut, valor.atrArr, self.linea, self.columna, console);
+            pos:int = scope.crearVariable(valor.valor, self.id, 'Vector', valor.tipo, self.mut, valor.atrArr, self.linea, self.columna, console, valor.esRef);
         else:
-            pos:int = scope.crearVariable(valor.valor, self.id, 'Arreglo', valor.tipo, self.mut, valor.atrArr, self.linea, self.columna, console);
-        self.generador.setStack(pos, valor.valor);
+            pos:int = scope.crearVariable(valor.valor, self.id, 'Arreglo', valor.tipo, self.mut, valor.atrArr, self.linea, self.columna, console, valor.esRef);
+        pos = pos + self.regActual if (self.regActual != None) else pos;
+        temp:str= self.generador.newTemp();
+        self.generador.addOperacion(temp, 'SP', pos, '+');
+        self.generador.setStack(temp, valor.valor);
 
     def valorDefault(self, dimension:Dimension):
         arr = Arreglo([], self.linea, self.columna);
@@ -95,7 +100,8 @@ class AsignacionArreglo(Instruccion):
     def asignacionArreglo(self, val:Simbolo, console:Console, scope):
         '''
         tIndice = 0;
-        temp = STACK[val.posicion];
+        tempPos = SP + val.posicion;
+        temp = STACK[tempPos];
         t1 = i*iDim;
         tIndice = tIndice + t1;
         ...
@@ -118,11 +124,11 @@ class AsignacionArreglo(Instruccion):
             _indices.append(index.valor);
         tIndice:str = self.generador.newTemp();
         temp:str = self.generador.newTemp();
+        tempPos:str = self.generador.newTemp();
+        self.generador.addOperacion(tempPos, 'SP', val.posicion, '+');
         self.generador.addOperacion(tIndice, '0', '', '');
-        self.generador.getStack(temp, val.posicion);
-        print("sisoi a medias")
+        self.generador.getStack(temp, tempPos);
         if (val.esRef):
-            print("sisoi")
             self.generador.getStack(temp, temp);
         atrArr = AtributosArreglo(False, None);
         esArr:bool = False;
@@ -177,7 +183,8 @@ class AsignacionArreglo(Instruccion):
     def asignacionVector(self, val:Simbolo, console:Console, scope):
         # indices para obtener el valor deseado
         '''
-        temp = STACK[val.posicion];
+        tempPos = SP + val.posicion;
+        temp = STACK[tempPos];
         '''
         self.generador.addComentario('ASIGNACIÓN A VECTOR');
         _indices:list = [];
@@ -191,7 +198,9 @@ class AsignacionArreglo(Instruccion):
             _indices.append(index.valor);
         temp:str = self.generador.newTemp();
         tempPuntero:str = self.generador.newTemp();
-        self.generador.getStack(temp, val.posicion);
+        tempPos:str = self.generador.newTemp();
+        self.generador.addOperacion(tempPos, 'SP', val.posicion, '+');
+        self.generador.getStack(temp, tempPos);
         for i in _indices:
             '''
             tempPuntero = temp + indices[n];

@@ -1,7 +1,7 @@
 from .Tipos import TipoDato
 
 class AtributosArreglo:
-    def __init__(self, esVector:bool, with_capacity:int) -> None:
+    def __init__(self, esVector:bool, with_capacity:str) -> None:
         self.esVector = esVector;
         self.with_capacity = with_capacity;
         self.size = 0;
