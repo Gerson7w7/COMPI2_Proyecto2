@@ -18,6 +18,7 @@ class LlamadaFuncion(Expresion):
     def ejecutar(self, console: Console, scope: Scope):
         self.generador.addComentario('LLAMADA A FUNCIÓN');
         # obtenemos la función 
+        print("sisoi")
         funcion:Funcion = scope.getFuncion(self.id, self.linea, self.columna);
         newScope:Scope = Scope(scope.getGlobal(), f'Funcion {self.id}');
         # verificando si la cantidad de argumentos son == a la cantidad de parámetros de la función

@@ -22,14 +22,14 @@ def grammar():
         print(data['data']);
         console.output = ""; console.errores = []; console.simbolos = [];
         generador: Generador = Generador();
-        #try:
-        ast: Ast = parser.parse(data['data']);
-        scope: Scope = Scope(None, 'Global');
-        ast.generador = generador;
-        ast.ejecutar(console, scope);
-        # except Exception as e:
-        #     generador.errorSem(e.args[0]);
-        #print("soi console: " + generador.getCodigo());
+        try:
+            ast: Ast = parser.parse(data['data']);
+            scope: Scope = Scope(None, 'Global');
+            ast.generador = generador;
+            ast.ejecutar(console, scope);
+        except Exception as e:
+            generador.errorSem(e.args[0], generador.newEtq());
+        print("soi console: " + generador.getCodigo());
         return {
             'salida': generador.getCodigo()
         }

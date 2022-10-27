@@ -1,5 +1,3 @@
-from ..extra.Simbolo import AtributosArreglo
-from .Declaracion import Declaracion
 from ..extra.Tipos import TipoDato
 from .DeclaracionArreglo import Dimension
 from .Instruccion import Instruccion

@@ -21,20 +21,24 @@ class Ast:
         scope.setFuncion('main', main);
 
         flag:bool = True;
+        i:int = 0
         while(flag):
+            print('hola')
             flag = False;
             for instruccion in self.instrucciones:
-                #try:
-                funcion:Funcion = scope.getFuncion(instruccion.id, 0, 0);
-                if (funcion.sePuedeEjecutar and not funcion.yaActivo):
-                    funcion.generador = self.generador;
-                    funcion.ejecutar(console, scope);
-                    funcion.yaActivo = True;
-                    scope.setFuncion(funcion.id, funcion);
-                if (not funcion.yaActivo):
-                    flag = True;
-                # except Exception as e:
-                #     # errores para recuperarse
-                #     console.append(f'ERROR: {e.args[0].descripcion}. En la línea {e.args[0].linea}, columna {e.args[0].columna}\n');
-                #     # agregamos a lista de errores
-                #     console.error(e.args[0]);
+                try:
+                    funcion:Funcion = scope.getFuncion(instruccion.id, 0, 0);
+                    if (funcion.sePuedeEjecutar and not funcion.yaActivo):
+                        funcion.generador = self.generador;
+                        funcion.ejecutar(console, scope);
+                        funcion.yaActivo = True;
+                        scope.setFuncion(funcion.id, funcion);
+                    if (not funcion.yaActivo):
+                        flag = True;
+                except Exception as e:
+                    # errores para recuperarse
+                    console.append(f'ERROR: {e.args[0].descripcion}. En la línea {e.args[0].linea}, columna {e.args[0].columna}\n', self.generador.newEtq());
+                    # agregamos a lista de errores
+                    console.error(e.args[0]);
+            i += 1;
+            if (i==5000):break;
