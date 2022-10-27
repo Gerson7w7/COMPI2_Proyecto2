@@ -30,7 +30,6 @@ class Imprimir(Instruccion):
                     self.generador.addPrintf('c', f'(char){str(ord(c))}');
             elif (c == '}'): 
                 # expresiones
-                print("exp:: " + str(self.expresiones[i]))
                 exp:Expresion = self.expresiones[i];
                 exp.generador = self.generador
                 val:RetornoExpresion = exp.ejecutar(console, scope);

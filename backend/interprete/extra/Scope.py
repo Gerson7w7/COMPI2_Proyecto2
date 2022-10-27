@@ -25,7 +25,6 @@ class Scope:
             # verificamos que no se haya declarado antes la misma variable
             if(scope.variables.get(id)):
                 # ERROR: la variable ya ha sido declarada
-                print(id)
                 _error = _Error(f'La variable {id} ya ha sido declarada', ambito, linea, columna, datetime.now())
                 raise Exception(_error);
             scope = scope.padre;

@@ -150,7 +150,6 @@ class Aritmetica(Expresion):
                 _error = _Error(f'No se puede operar el módulo de {valIzquierda.valor} con {valDerecha.valor}', scope.ambito, self.linea, self.columna, datetime.now())
                 raise Exception(_error);
         #error, tipos diferentes
-        print(str(valIzquierda.tipo) +'=='+ str(valDerecha.tipo) + " op:: " + str(self.tipo))
         _error = _Error(f'No se puede operar un tipo {valIzquierda.tipo.name} con un tipo {valDerecha.tipo.name}', scope.ambito, self.linea, self.columna, datetime.now())
         raise Exception(_error);
 

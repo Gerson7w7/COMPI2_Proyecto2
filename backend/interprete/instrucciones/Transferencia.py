@@ -46,6 +46,7 @@ class Transferencia(Instruccion):
             temp = SP + pos;
             STACK[pos] = val.valor;
             '''
+            self.retorno.generador = self.generador;
             val:RetornoExpresion = self.retorno.ejecutar(console, scope);
             pos:int = scope.setValor('retorno', val, self.linea, self.columna);
             temp:str= self.generador.newTemp();

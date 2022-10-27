@@ -29,7 +29,7 @@ def grammar():
         ast.ejecutar(console, scope);
         # except Exception as e:
         #     generador.errorSem(e.args[0]);
-        print("soi console: " + generador.getCodigo());
+        #print("soi console: " + generador.getCodigo());
         return {
             'salida': generador.getCodigo()
         }

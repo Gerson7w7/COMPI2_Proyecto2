@@ -51,6 +51,8 @@ class DeclaracionArreglo(Instruccion):
                 raise Exception(_error);
         if (valor.atrArr.esVector):
             valor.atrArr.dimensiones = atrArr.dimensiones;
+            valor.tipo = self.dimension.tipo if (valor.tipo == None) else valor.tipo;
+            print("id:: " + str(id) + "     tipo:: " + str(valor.tipo))
             pos:int = scope.crearVariable(valor.valor, self.id, 'Vector', valor.tipo, self.mut, valor.atrArr, self.linea, self.columna, console, valor.esRef);
         else:
             pos:int = scope.crearVariable(valor.valor, self.id, 'Arreglo', valor.tipo, self.mut, valor.atrArr, self.linea, self.columna, console, valor.esRef);
@@ -90,7 +92,6 @@ class AsignacionArreglo(Instruccion):
     def ejecutar(self, console: Console, scope):
         # aquí obtenemos el puntero hacia la primera posición del heap
         val:Simbolo = scope.getValor(self.id, self.linea, self.columna);
-        print("id declaracion:: "+str(self.id)+"    esrEF:: "+str(val.esRef))
         # obtenemos el valor de la expresion
         if (val.atrArr.esVector):
             self.asignacionVector(val, console, scope);

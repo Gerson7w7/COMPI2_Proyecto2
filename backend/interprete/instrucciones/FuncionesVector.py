@@ -1,6 +1,5 @@
 from ..expresiones.Expresion import Expresion
 from ..extra.Tipos import TipoDato
-from ..extra.Simbolo import Simbolo
 from .Instruccion import Instruccion
 from ..extra.Console import Console, _Error
 from ..extra.Scope import Scope
@@ -76,8 +75,20 @@ class Push(Instruccion):
         self.generador.setHeap(temp, '-1');
         # ahora revisaremos si se trata de un vector con un tamaño definido
         vector.atrArr.size += 1;
-        if (vector.atrArr.with_capacity < vector.atrArr.size):
+        '''
+        if (vector.atrArr.with_capacity < vector.atrArr.size) goto Ltrue;
+        goto Lfalse;
+        Ltrue:
             vector.atrArr.with_capacity = vector.atrArr.with_capacity * 2;
+        Lfalse:
+        '''
+        Ltrue:str = self.generador.newEtq();
+        Lfalse:str = self.generador.newEtq();
+        self.generador.addIf(vector.atrArr.with_capacity, vector.atrArr.size, '<', Ltrue);
+        self.generador.addGoto(Lfalse);
+        self.generador.addEtq(Ltrue);
+        self.generador.addOperacion(vector.atrArr.with_capacity, vector.atrArr.with_capacity, '2', '*');
+        self.generador.addEtq(Lfalse);
         vector.valor = RetornoExpresion(tempRetorno, vector.tipo, True);
         pos:int = scope.setValor(self.id.id, vector, self.linea, self.columna);
         tempPos:str= self.generador.newTemp();
@@ -107,13 +118,15 @@ class Insert(Instruccion):
         valExp:RetornoExpresion = self.exp2.ejecutar(console, scope);
         # obtenemos el vector
         self.id.generador = self.generador;
-        vector:Simbolo = self.id.ejecutar(console, scope);
+        vector:RetornoExpresion = self.id.ejecutar(console, scope);
         if (vector.atrArr == None):
             # ERROR. No es un vector
             _error = _Error(f'La variable {vector.id} no es un vector, no contiene la función Insert', scope.ambito, self.linea, self.columna, datetime.now());
             raise Exception(_error);
         if (valExp.tipo != vector.tipo):
             # ERROR. Tipos incompatibles
+            print(self.id.id)
+            print("valExp: "+str(valExp.tipo)+"     vec:: " +str(vector.tipo))
             _error = _Error(f'Tipos incompatibles. No se puede almacenar una expresión {valExp.tipo.name} en una variable de tipo {vector.tipo.name}', scope.ambito, self.linea, self.columna, datetime.now());
             raise Exception(_error);
         if (valPos.tipo != TipoDato.INT64):
@@ -285,6 +298,7 @@ class Longitud(Instruccion):
             _error = _Error(f'La variable {vector.id} no es un vector, no contiene la función len', scope.ambito, self.linea, self.columna, datetime.now());
             raise Exception(_error);
         # retornamos la longitud de la lista
+        print("size:: " + str(vector.atrArr.size))
         return RetornoExpresion(vector.atrArr.size, TipoDato.INT64, False);
 
 class Capacity(Instruccion):
@@ -305,6 +319,4 @@ class Capacity(Instruccion):
             _error = _Error(f'La variable {vector.id} no es un vector, no contiene la función capacity', scope.ambito, self.linea, self.columna, datetime.now());
             raise Exception(_error);
         # retornamos la capacidad de la lista
-        temp:str = self.generador.newTemp();
-        self.generador.addOperacion(temp, vector.atrArr.with_capacity, '', '');
-        return RetornoExpresion(temp, TipoDato.INT64, False);
+        return RetornoExpresion(vector.atrArr.with_capacity, TipoDato.INT64, False);
